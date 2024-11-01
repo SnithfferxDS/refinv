@@ -21,8 +21,145 @@ db.exec(`
     name TEXT NOT NULL,
     description TEXT,
     price DECIMAL(10,2) NOT NULL,
-    stock INTEGER NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    title TEXT,
+    short_description TEXT,
+    tags TEXT,
+    sku TEXT,
+    mpn TEXT,
+    upc TEXT NOT NULL,
+    ean TEXT,
+    isbn TEXT,
+    measure_unit TEXT,
+    weight DECIMAL(10,2),
+    width DECIMAL(10,2),
+    height DECIMAL(10,2),
+    length DECIMAL(10,2),
+    outer_diameter DECIMAL(10,2),
+    inner_diameter DECIMAL(10,2),
+    brand INTEGER,
+    customizable BOOLEAN DEFAULT FALSE,
+    customizable_fields TEXT,
+    status INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME,
+    deleted_at DATETIME
+  );
+
+  CREATE TABLE IF NOT EXISTS categories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT,
+    status INTEGER,
+    parent_id INTEGER,
+    logo TEXT,
+    main BOOLEAN DEFAULT FALSE,
+    updated_at DATETIME,
+    deleted_at DATETIME
+  );
+
+  CREATE TABLE IF NOT EXISTS suppliers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    address TEXT,
+    phone TEXT,
+    email TEXT,
+    website TEXT,
+    contact TEXT,
+    country TEXT,
+    state TEXT,
+    city TEXT,
+    street TEXT,
+    optional TEXT,
+    logo TEXT,
+    updated_at DATETIME,
+    deleted_at DATETIME
+  );
+
+  CREATE TABLE IF NOT EXISTS status (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT,
+    active BOOLEAN DEFAULT FALSE,
+    updated_at DATETIME,
+    deleted_at DATETIME
+  );
+
+  CREATE TABLE IF NOT EXISTS brands (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    description TEXT,
+    active BOOLEAN DEFAULT FALSE,
+    updated_at DATETIME,
+    deleted_at DATETIME
+  );
+
+  CREATE TABLE IF NOT EXISTS purchases (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    number TEXT NOT NULL,
+    purchase_date DATETIME,
+    ingress_date DATETIME,
+    procesed_date DATETIME,
+    total DECIMAL(10,2),
+    taxes DECIMAL(10,2),
+    discount DECIMAL(10,2),
+    purchase_details INTEGER,
+    supplier_id INTEGER,
+    buyer_id INTEGER,
+    procesed BOOLEAN DEFAULT FALSE,
+    updated_at DATETIME,
+    deleted_at DATETIME
+  );
+
+  CREATE TABLE IF NOT EXISTS purchase_details (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    invoice_number TEXT NOT NULL,
+    product_id INTEGER,
+    price,
+    taxes,
+    discount,
+    quantity,
+    procesed BOOLEAN DEFAULT FALSE,
+    updated_at DATETIME,
+    deleted_at DATETIME
+  );
+
+  CREATE TABLE IF NOT EXISTS sales (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hash TEXT,
+    sale_date DATETIME,
+    process_date DATETIME,
+    paid_date DATETIME,
+    total DECIMAL(10,2),
+    taxes DECIMAL(10,2),
+    discount DECIMAL(10,2),
+    sale_details INTEGER,
+    seller_id INTEGER,
+    buyer_id INTEGER,
+    procesed BOOLEAN DEFAULT FALSE,
+    updated_at DATETIME,
+    deleted_at DATETIME
+  );
+
+  CREATE TABLE IF NOT EXISTS sale_details (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    hash TEXT,
+    product_id INTEGER,
+    price,
+    taxes,
+    discount,
+    quantity,
+    procesed BOOLEAN DEFAULT FALSE,
+    updated_at DATETIME,
+    deleted_at DATETIME
+  );
+
+  CREATE TABLE IF NOT EXISTS buyers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name  TEXT NOT NULL,
+    logo TEXT,
+    active BOOLEAN DEFAULT FALSE,
+    updated_at DATETIME,
+    deleted_at DATETIME
   );
 
   CREATE TABLE IF NOT EXISTS transactions (
@@ -49,7 +186,7 @@ app.get('/api/products', (req, res) => {
 app.post('/api/products', (req, res) => {
   try {
     const { name, description, price, stock } = req.body;
-    
+
     if (!name || !price || !stock) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
@@ -65,19 +202,19 @@ app.post('/api/products', (req, res) => {
 app.post('/api/transactions', (req, res) => {
   try {
     const { product_id, type, quantity, price } = req.body;
-    
+
     if (!product_id || !type || !quantity || !price) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
     const stmt = db.prepare('INSERT INTO transactions (product_id, type, quantity, price) VALUES (?, ?, ?, ?)');
     const updateStock = db.prepare('UPDATE products SET stock = stock + ? WHERE id = ?');
-    
+
     db.transaction(() => {
       stmt.run(product_id, type, quantity, price);
       updateStock.run(type === 'purchase' ? quantity : -quantity, product_id);
     })();
-    
+
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: error.message });
