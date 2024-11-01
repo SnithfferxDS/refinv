@@ -20,7 +20,6 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     description TEXT,
-    price DECIMAL(10,2) NOT NULL,
     title TEXT,
     short_description TEXT,
     tags TEXT,
@@ -183,16 +182,105 @@ app.get('/api/products', (req, res) => {
   }
 });
 
+app.get('/api/brands', (req, res) => {
+  try {
+    const products = db.prepare('SELECT * FROM brands').all();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/suppliers', (req, res) => {
+  try {
+    const products = db.prepare('SELECT * FROM suppliers').all();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/status', (req, res) => {
+  try {
+    const products = db.prepare('SELECT * FROM status').all();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/buyers', (req, res) => {
+  try {
+    const products = db.prepare('SELECT * FROM buyers').all();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/purchases', (req, res) => {
+  try {
+    const products = db.prepare('SELECT * FROM purchases').all();
+    res.json(products);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.post('/api/products', (req, res) => {
   try {
-    const { name, description, price, stock } = req.body;
+    const {
+      name,
+      upc,
+      description,
+      price,
+      title,
+      short_description,
+      tags,
+      sku,
+      mpn,
+      ean,
+      isbn,
+      measure_unit,
+      weight,
+      width,
+      height,
+      length,
+      outer_diameter,
+      inner_diameter,
+      brand,
+      customizable,
+      customizable_fields,
+      status } = req.body;
 
-    if (!name || !price || !stock) {
+    if (!name || !upc) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    const stmt = db.prepare('INSERT INTO products (name, description, price, stock) VALUES (?, ?, ?, ?)');
-    const result = stmt.run(name, description, price, stock);
+    const stmt = db.prepare('INSERT INTO products (name,description,price,title,short_description,tags,sku,mpn,upc,ean,isbn,measure_unit,weight,width,height,length,outer_diameter,inner_diameter,brand,customizable,customizable_fields,status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+    const result = stmt.run(
+      name,
+      upc,
+      description,
+      price,
+      title,
+      short_description,
+      tags,
+      sku,
+      mpn,
+      ean,
+      isbn,
+      measure_unit,
+      weight,
+      width,
+      height,
+      length,
+      outer_diameter,
+      inner_diameter,
+      brand,
+      customizable,
+      customizable_fields,
+      status);
     res.json({ id: result.lastInsertRowid });
   } catch (error) {
     res.status(500).json({ error: error.message });
