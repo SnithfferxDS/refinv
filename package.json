@@ -12,18 +12,21 @@
     "server": "node server/index.js"
   },
   "dependencies": {
+    "@astrojs/db": "^0.14.3",
     "@astrojs/node": "^8.3.4",
     "@astrojs/react": "^3.6.2",
-    "@astrojs/tailwind": "^5.1.0",
-    "@types/react": "^18.3.11",
+    "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/tailwind": "^5.1.2",
+    "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
-    "astro": "^4.15.3",
-    "cors": "^2.8.5",
+    "astro": "^4.16.8",
     "axios": "^1.7.7",
     "flowbite": "^2.5.2",
+    "flowbite-typography": "^1.0.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "sweetalert2": "^11.14.3",
-    "tailwindcss": "^3.4.1"
+    "sweetalert2": "^11.14.4",
+    "tailwind-scrollbar": "^3.1.0",
+    "tailwindcss": "^3.4.14"
   }
 }
