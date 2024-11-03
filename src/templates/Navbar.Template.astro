@@ -1,0 +1,85 @@
+---
+import Navlink from "../components/Navlink.astro";
+
+const APP_NAME = 'Refinv';
+const APP_VERSION = '1.0';
+---
+
+<header>
+    <nav
+        class="
+        fixed
+        z-30
+        w-full
+        border-b
+        py-1
+        px-4
+        text-white
+        bg-secondary-500
+        border-secondary-400
+        dark:bg-secondary-600
+        dark:border-secondary-500"
+    >
+        <div
+            class="
+            flex
+            justify-between
+            items-center
+            max-w-screen-2xl
+            mx-auto"
+        >
+            <div
+                class="
+                flex
+                justify-start
+                items-center"
+            >
+                <a href="/" class="flex mr-14">
+                    <img src="/logos/app_logo.png" class="mr-3 h-8" alt="Logo" />
+                    <span class="self-center hidden sm:flex text-2xl font-semibold whitespace-nowrap text-white">
+                        { APP_NAME }
+                        v{ APP_VERSION }
+                    </span>
+                </a>
+                    <!-- Desktop menu -->
+                <div 
+                    class="
+                    hidden justify-between
+                    items-center
+                    w-full
+                    lg:flex
+                    lg:w-auto
+                    lg:order-1">
+                    <ul
+                        class="
+                        flex
+                        flex-col
+                        mt-1.5
+                        space-x-2
+                        text-sm
+                        font-medium
+                        lg:flex-row
+                        lg:space-x-4
+                        xl:space-x-6
+                        lg:mt-0">
+                       <li>
+                        <Navlink href="/" active={true}>
+                            Home
+                        </Navlink>
+                       </li>
+                       <li>
+                        <Navlink href="/about">
+                            About
+                        </Navlink>
+                       </li>
+                       <li>
+                        <Navlink href="/contact" >
+                            Contact
+                        </Navlink>
+                       </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
