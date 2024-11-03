@@ -1,0 +1,39 @@
+---
+interface Props {
+    title: string;
+}
+
+const APP_NAME = 'Refinv';
+const APP_VERSION = '1.0';
+const { title } = Astro.props;
+---
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="description"
+        content="Skeleton for a modular PHP web applications base on MVC pattern with Vite for auto web refresh and Tailwindcss for a modern design">
+    <meta name="generator" content={ Astro.generator } />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="keywords" content="modular,mvc,php,framework,web,application,api,skeleton,boilerplate">
+    <title>{ title } | { APP_NAME }-{ APP_VERSION }</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="autor" content="Jorge Echeverria, Bytes4Run" />
+    <meta name="copyright" content="Bytes4Run Licencing" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link href="https: //fonts.cdnfonts.com/css/inter" />
+    
+    <script is:inline>
+        if (
+            localStorage.getItem('color-theme') === 'dark' ||
+            (!('color-theme' in localStorage) &&
+                window.matchMedia('(prefers-color-scheme: dark)').matches)
+        ) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>

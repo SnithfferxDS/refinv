@@ -1,0 +1,32 @@
+---
+interface Props {
+    url: string;
+    linkTitle: string;
+}
+const { url, linkTitle } = Astro.props;
+---
+
+<a 
+href={url}
+class="
+flex
+items-center
+p-2
+text-base
+rounded-lg
+group
+transition
+duration-75
+focus:outline-offset-2
+text-gray-200
+hover:bg-gray-400
+focus:outline-bluish-600
+dark:hover:bg-gray-700
+bg-secondary-500/50
+border-secondary-400/50
+dark:bg-secondary-600/50
+dark:border-secondary-500/50
+">
+<slot name="icon" />
+<span class="ml-3" sidebar-toggle-item>{linkTitle}</span>
+</a>

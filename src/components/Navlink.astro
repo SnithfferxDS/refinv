@@ -1,0 +1,22 @@
+---
+interface Props {
+    active: boolean;
+    href: string;
+};
+
+
+const { href, active } = Astro.props;
+let classes = "";
+let comunes = "inline-flex items-center p-2.5 text-sm font-medium leading-5 rounded-lg text-white transition duration-150 ease-in-out ";
+    classes =
+        (active !== false)
+            ? comunes +
+                'bg-secondary-600 focus:outline-none hover:bg-secondary-700 border-b-2 border-blue-300 dark:bg-secondary-500 dark:hover:bg-secondary-400'
+            : comunes +
+                'hover:bg-secondary-600 focus:outline-none dark:hover:bg-secondary-500';
+
+---
+
+<a href={href} class={classes}>
+    <slot />
+</a>
