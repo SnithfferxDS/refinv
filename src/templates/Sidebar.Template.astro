@@ -11,7 +11,7 @@
                 <ul class="pb-2 space-y-2">
                     <li>
                         <form action="/search" method="GET" class="lg:hidden">
-                            <label for="mobile-search" class="sr-only">Buscar</label>
+                            <label for="mobile-search" class="sr-only">Search</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                     <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20"
@@ -23,74 +23,56 @@
                                 </div>
                                 <input type="text" name="mobile-search" id="mobile-search"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Buscar.." />
+                                    placeholder="Search.." />
                             </div>
                         </form>
                     </li>
                     <!-- Home -->
                     <li>
-                        <a href="/" class="
-                                flex
-                                items-center
-                                p-2
-                                text-base
-                                rounded-lg
-                                group
-                                transition
-                                duration-75
-                                focus:outline-offset-2
-                                text-gray-200
-                                hover:bg-gray-400
-                                focus:outline-bluish-600
-                                dark:hover:bg-gray-700
-                                bg-secondary-500/50
-                                border-secondary-400/50
-                                dark:bg-secondary-600/50
-                                dark:border-secondary-500/50
-                                ">
-                            <svg fill="currentColor" class="
-                                    w-6
-                                    h-6
-                                    " viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <path
-                                    d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z">
-                                </path>
-                                <path
-                                    d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z">
-                                </path>
+                        <a href="/" class="flex items-center p-2 text-base rounded-lg group transition duration-75 focus:outline-offset-2 text-gray-200 hover:bg-gray-400 focus:outline-bluish-600 dark:hover:bg-gray-700 bg-secondary-500/50 border-secondary-400/50 dark:bg-secondary-600/50 dark:border-secondary-500/50">
+                            <svg fill="currentColor" class="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"></path>
+                                <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"></path>
                             </svg>
-                            <span class="ml-3" sidebar-toggle-item>Inicio</span>
+                            <span class="ml-3" sidebar-toggle-item>Home</span>
                         </a>
                     </li>
                     <!-- Dashboard -->
                     <li>
-                        <a
-                            href="/dashboard"
-                            class="
-                            flex
-                            items-center
-                            p-2
-                            text-base
-                            rounded-lg
-                            group
-                            transition
-                            duration-75
-                            focus:outline-offset-2
-                            text-gray-200
-                            hover:bg-secondary-500/75
-                            focus:outline-bluish-600
-                            dark:text-gray-200
-                            dark:hover:bg-secondary-600/75
-                            border-secondary-500/50
-
-
-                        ">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
-                                xmlns="http://www.w3.org/2000/svg">
+                        <a href="/dashboard" class="flex items-center p-2 text-base rounded-lg group transition duration-75 focus:outline-offset-2 text-gray-200 hover:bg-secondary-500/75 focus:outline-bluish-600 dark:text-gray-200 dark:hover:bg-secondary-600/75 border-secondary-500/50">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
                                 <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
                             </svg>
-                            <span class="ml-3" sidebar-toggle-item>Panel</span>
+                            <span class="ml-3" sidebar-toggle-item>Dashboard</span>
+                        </a>
+                    </li>
+                    <!-- Categories -->
+                    <li>
+                        <a href="/categories" class="flex items-center p-2 text-base rounded-lg group transition duration-75 focus:outline-offset-2 text-gray-200 hover:bg-secondary-500/75 focus:outline-bluish-600 dark:text-gray-200 dark:hover:bg-secondary-600/75 border-secondary-500/50">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path>
+                            </svg>
+                            <span class="ml-3" sidebar-toggle-item>Categories</span>
+                        </a>
+                    </li>
+                    <!-- Brands -->
+                    <li>
+                        <a href="/brands" class="flex items-center p-2 text-base rounded-lg group transition duration-75 focus:outline-offset-2 text-gray-200 hover:bg-secondary-500/75 focus:outline-bluish-600 dark:text-gray-200 dark:hover:bg-secondary-600/75 border-secondary-500/50">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="ml-3" sidebar-toggle-item>Brands</span>
+                        </a>
+                    </li>
+                    <!-- Suppliers -->
+                    <li>
+                        <a href="/suppliers" class="flex items-center p-2 text-base rounded-lg group transition duration-75 focus:outline-offset-2 text-gray-200 hover:bg-secondary-500/75 focus:outline-bluish-600 dark:text-gray-200 dark:hover:bg-secondary-600/75 border-secondary-500/50">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                                <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
+                            </svg>
+                            <span class="ml-3" sidebar-toggle-item>Suppliers</span>
                         </a>
                     </li>
                 </ul>
