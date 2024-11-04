@@ -1,23 +1,48 @@
 ---
 import Layout from '../layouts/Guest.Layout.astro';
-import ProductList from '../components/ProductList.astro';
-import AddProduct from '../components/AddProduct.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { db } from 'astro:db';
+
+// Get recent products with their main image
+/*
+const products = await db.select({
+  id: 'products.id',
+  name: 'products.name',
+  short_description: 'products.short_description'
+})
+.from('products')
+,
+  image_url: 'images.image_url',
+  price: 'prices.price'
+.leftJoin('product_relations', 'products.id', 'product_relations.product_id')
+.leftJoin('images', 'product_relations.image_id', 'images.id')
+.leftJoin('prices', 'product')
+.orderBy('products.created_at', 'desc')
+.limit(12);
+
+{products.map((product) => (
+          <ProductCard
+            id={product.id}
+            name={product.name}
+            short_description={product.short_description}
+            image_url=`assets/img/products/${product.image_url}`
+            price={product.price} // TODO: Add price to products table and use real price
+          />
+        ))
+      }
+*/
+const products = [
+{id:1,name:"iPhone 3", short_description:"iphone 3",image_url:"234445",price: 450.85},
+{id:2,name:"iPhone 4", short_description:"iphone 4",image_url:"2345", price:550.90}
+];
 ---
 
-<Layout title="Electronics Inventory">
-	<main class="container mx-auto px-4 py-8">
-		<h1 class="text-4xl font-bold text-center mb-8">Electronics Inventory Management</h1>
-		
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-			<div>
-				<h2 class="text-2xl font-semibold mb-4">Add New Product</h2>
-				<AddProduct />
-			</div>
-			
-			<div>
-				<h2 class="text-2xl font-semibold mb-4">Product List</h2>
-				<ProductList />
-			</div>
-		</div>
-	</main>
+<Layout title="Home">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Latest Products</h1>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      
+    </div>
+  </div>
 </Layout>
