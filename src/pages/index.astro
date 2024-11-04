@@ -1,24 +1,28 @@
 ---
 import Layout from '../layouts/Guest.Layout.astro';
 import ProductCard from '../components/ProductCard.astro';
-import { db } from 'astro:db';
+import { eq,db, desc } from 'astro:db';
+import { Products } from 'astro:db';
+import { Images } from 'astro:db';
+import { Prices } from 'astro:db';
+import { Product_Relations } from 'astro:db';
 
 // Get recent products with their main image
-/*
 const products = await db.select({
-  id: 'products.id',
-  name: 'products.name',
-  short_description: 'products.short_description'
+  id: Products.id,
+  name: Products.name,
+  short_description: Products.short_description,
+  image_url: Images.image_url,
+  price: Prices.price
 })
-.from('products')
+  .from(Products)
+  .leftJoin(Product_Relations, eq(Product_Relations.product_id, Products.id))
+  .leftJoin(Images, eq(Images.id, Product_Relations.image_id))
+  .leftJoin(Prices, eq(Prices.product_id, Products.id))
+  .orderBy(desc(Products.created_at))
+  .limit(4);
+/*
 ,
-  image_url: 'images.image_url',
-  price: 'prices.price'
-.leftJoin('product_relations', 'products.id', 'product_relations.product_id')
-.leftJoin('images', 'product_relations.image_id', 'images.id')
-.leftJoin('prices', 'product')
-.orderBy('products.created_at', 'desc')
-.limit(12);
 
 {products.map((product) => (
           <ProductCard
@@ -30,11 +34,11 @@ const products = await db.select({
           />
         ))
       }
+      const products = [
+      {id:1,name:"iPhone 3", short_description:"iphone 3",image_url:"234445",price: 450.85},
+      {id:2,name:"iPhone 4", short_description:"iphone 4",image_url:"2345", price:550.90}
+      ];
 */
-const products = [
-{id:1,name:"iPhone 3", short_description:"iphone 3",image_url:"234445",price: 450.85},
-{id:2,name:"iPhone 4", short_description:"iphone 4",image_url:"2345", price:550.90}
-];
 ---
 
 <Layout title="Home">
@@ -42,7 +46,17 @@ const products = [
     <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Latest Products</h1>
     
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      
+      {
+        products.map((product) => (
+          <ProductCard
+            id={product.id}
+            name={product.name}
+            short_description={product.short_description ?? undefined}
+            image_url={product.image_url ?? undefined}
+            price= {product.price ?? 0.00}
+            />
+        ))
+      }
     </div>
   </div>
 </Layout>

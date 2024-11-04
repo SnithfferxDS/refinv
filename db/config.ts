@@ -26,7 +26,7 @@ const Products = defineTable({
     status: column.number({ references: () => Statuses.columns.id, default: 1 }),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true }),
-    deleted_at: column.date({ optional: true }),
+    deleted_at: column.date({ optional: true })
   }
 });
 
@@ -41,7 +41,7 @@ const Categories = defineTable({
     main: column.boolean({ default: false }),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true }),
-    deleted_at: column.date({ optional: true }),
+    deleted_at: column.date({ optional: true })
   }
 });
 
@@ -54,7 +54,7 @@ const Images = defineTable({
     possition: column.number(),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true }),
-    deleted_at: column.date({ optional: true }),
+    deleted_at: column.date({ optional: true })
   }
 });
 
@@ -82,8 +82,8 @@ const Product_Relations = defineTable({
 const Category_Relations = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
-    parent_id: column.number({ references: () => Categories.columns.id }),
-    child_id: column.number({ references: () => Categories.columns.id }),
+    parent_id: column.number(),
+    child_id: column.number(),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true })
   }
@@ -263,7 +263,7 @@ const Prices = defineTable({
 const Stocks = defineTable({
   columns: {
     id: column.number({primaryKey:true}),
-    product_id: column({references: () => Products.columns.id}),
+    product_id: column.number({references: () => Products.columns.id}),
     quantity:column.number(),
     warehouse_id:column.number(),
     created_at: column.date({ default: NOW }),
@@ -300,6 +300,7 @@ export default defineDb({
     Images,
     Prices,
     Stocks,
-    Warehouses
+    Warehouses,
+    Aestetics
   },
 });
