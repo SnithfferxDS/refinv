@@ -1,0 +1,200 @@
+---
+import { db } from 'astro:db';
+import Layout from '../../layouts/App.Layout.astro';
+
+const suppliers = await db.select().from('suppliers');
+const products = await db.select().from('products');
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const number = formData.get('number')?.toString();
+  const purchase_date = new Date(formData.get('purchase_date')?.toString() || '');
+  const supplier_id = parseInt(formData.get('supplier_id')?.toString() || '0');
+  const total = parseFloat(formData.get('total')?.toString() || '0');
+
+  if (number && supplier_id) {
+    const purchase = await db.insert('purchases').values({
+      number,
+      purchase_date,
+      supplier_id,
+      total,
+      procesed: false
+    }).returning().get();
+
+    // Handle purchase details
+    const productIds = formData.getAll('product_id[]');
+    const quantities = formData.getAll('quantity[]');
+    const prices = formData.getAll('price[]');
+
+    for (let i = 0; i < productIds.length; i++) {
+      await db.insert('purchase_details').values({
+        invoice_number: number,
+        product_id: parseInt(productIds[i].toString()),
+        quantity: parseInt(quantities[i].toString()),
+        price: parseFloat(prices[i].toString()),
+        procesed: false
+      });
+    }
+
+    return Astro.redirect('/purchases');
+  }
+}
+---
+
+<Layout title="Create Purchase">
+  <div class="max-w-4xl mx-auto">
+    <form method="POST" class="space-y-6" id="purchaseForm">
+      <div class="grid grid-cols-2 gap-6">
+        <div>
+          <label for="number" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Purchase Number</label>
+          <input
+            type="text"
+            name="number"
+            id="number"
+            required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+
+        <div>
+          <label for="purchase_date" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Purchase Date</label>
+          <input
+            type="date"
+            name="purchase_date"
+            id="purchase_date"
+            required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+
+        <div>
+          <label for="supplier_id" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Supplier</label>
+          <select
+            name="supplier_id"
+            id="supplier_id"
+            required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          >
+            <option value="">Select a supplier</option>
+            {suppliers.map((supplier) => (
+              <option value={supplier.id}>{supplier.name}</option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-6">
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Products</h3>
+        <div id="products-container" class="mt-4 space-y-4">
+          <!-- Product rows will be added here -->
+        </div>
+
+        <button
+          type="button"
+          onclick="addProductRow()"
+          class="mt-4 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Add Product
+        </button>
+      </div>
+
+      <div class="border-t border-gray-200 pt-4">
+        <div class="flex justify-between items-center">
+          <span class="text-lg font-medium text-gray-900 dark:text-white">Total:</span>
+          <span class="text-lg font-medium text-gray-900 dark:text-white" id="total-amount">$0.00</span>
+          <input type="hidden" name="total" id="total-input" value="0" />
+        </div>
+      </div>
+
+      <div>
+        <button
+          type="submit"
+          class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Create Purchase
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script define:vars={{ products }}>
+    let rowCounter = 0;
+
+    function addProductRow() {
+      const container = document.getElementById('products-container');
+      const row = document.createElement('div');
+      row.className = 'grid grid-cols-4 gap-4';
+      row.innerHTML = `
+        <div>
+          <select
+            name="product_id[]"
+            required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            onchange="updateRowTotal(${rowCounter})"
+          >
+            <option value="">Select a product</option>
+            ${products.map(product => `
+              <option value="${product.id}">${product.name}</option>
+            `).join('')}
+          </select>
+        </div>
+        <div>
+          <input
+            type="number"
+            name="quantity[]"
+            min="1"
+            value="1"
+            required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            onchange="updateRowTotal(${rowCounter})"
+          />
+        </div>
+        <div>
+          <input
+            type="number"
+            name="price[]"
+            step="0.01"
+            min="0"
+            required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            onchange="updateRowTotal(${rowCounter})"
+          />
+        </div>
+        <div>
+          <button
+            type="button"
+            onclick="removeProductRow(this)"
+            class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+          >
+            Remove
+          </button>
+        </div>
+      `;
+      container.appendChild(row);
+      rowCounter++;
+    }
+
+    function removeProductRow(button) {
+      const row = button.closest('.grid');
+      row.remove();
+      updateTotal();
+    }
+
+    function updateRowTotal(rowIndex) {
+      updateTotal();
+    }
+
+    function updateTotal() {
+      const quantities = [...document.getElementsByName('quantity[]')].map(input => parseFloat(input.value) || 0);
+      const prices = [...document.getElementsByName('price[]')].map(input => parseFloat(input.value) || 0);
+      
+      const total = quantities.reduce((sum, quantity, index) => sum + (quantity * prices[index]), 0);
+      
+      document.getElementById('total-amount').textContent = `$${total.toFixed(2)}`;
+      document.getElementById('total-input').value = total;
+    }
+
+    // Add initial product row
+    addProductRow();
+  </script>
+</Layout>
