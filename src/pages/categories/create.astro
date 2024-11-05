@@ -1,5 +1,5 @@
 ---
-import { db } from 'astro:db';
+import { db,Categories } from 'astro:db';
 import Layout from '../../layouts/App.Layout.astro';
 
 if (Astro.request.method === 'POST') {
@@ -9,7 +9,7 @@ if (Astro.request.method === 'POST') {
   const main = formData.get('main') === 'on';
 
   if (name) {
-    await db.insert('categories').values({
+    await db.insert(Categories).values({
       name,
       description,
       main,

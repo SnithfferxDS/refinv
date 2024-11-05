@@ -1,9 +1,9 @@
 ---
-import { db, eq } from 'astro:db';
+import { db, eq,Categories } from 'astro:db';
 import Layout from '../../../layouts/App.Layout.astro';
 
 const { id } = Astro.params;
-const category = await db.select().from('categories').where(eq('categories.id', id)).get();
+const category = await db.select().from(Categories).where(eq(Categories.id, id)).get();
 
 if (!category) {
   return Astro.redirect('/categories');
@@ -16,11 +16,11 @@ if (Astro.request.method === 'POST') {
   const main = formData.get('main') === 'on';
 
   if (name) {
-    await db.update('categories').set({
+    await db.update(Categories).set({
       name,
       description,
       main,
-    }).where(eq('categories.id', id));
+    }).where(eq(Categories.id, id));
     return Astro.redirect('/categories');
   }
 }
