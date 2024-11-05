@@ -1,9 +1,9 @@
 ---
-import { db, eq } from 'astro:db';
+import { db, eq,Brands } from 'astro:db';
 import Layout from '../../../layouts/App.Layout.astro';
 
 const { id } = Astro.params;
-const brand = await db.select().from('brands').where(eq('brands.id', id)).get();
+const brand = await db.select().from(Brands).where(eq(Brands.id, id)).get();
 
 if (!brand) {
   return Astro.redirect('/brands');
@@ -15,10 +15,10 @@ if (Astro.request.method === 'POST') {
   const description = formData.get('description')?.toString();
 
   if (name) {
-    await db.update('brands').set({
+    await db.update(Brands).set({
       name,
       description,
-    }).where(eq('brands.id', id));
+    }).where(eq(Brands.id, id));
     return Astro.redirect('/brands');
   }
 }

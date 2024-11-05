@@ -1,8 +1,8 @@
 ---
-import { db, eq } from 'astro:db';
+import { Brands, db, eq } from 'astro:db';
 import Layout from '../../layouts/App.Layout.astro';
 
-const brands = await db.select().from('brands');
+const brands = await db.select().from(Brands);
 ---
 
 <Layout title="Brands">
