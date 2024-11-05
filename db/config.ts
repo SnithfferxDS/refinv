@@ -227,9 +227,13 @@ const Users = defineTable({
     active: column.boolean({ default: true }),
     level: column.number({ default: 0 }),
     avatar: column.text({ optional: true }),
-    created_at: column.date({ default: NOW }),
-    updated_at: column.date({ optional: true }),
-    deleted_at: column.date({ optional: true })
+    emailVerified: column.boolean({ default: false }),
+    verificationToken: column.text({ optional: true }),
+    resetToken: column.text({ optional: true }),
+    resetTokenExpiry: column.date({ optional: true }),
+    createdAt: column.date({ default: NOW }),
+    updatedAt: column.date({ optional: true }),
+    deleted_at: column.date({ optional: true }),
   }
 });
 
