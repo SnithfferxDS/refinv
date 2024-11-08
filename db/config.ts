@@ -10,7 +10,7 @@ const Products = defineTable({
     tags: column.json(),
     sku: column.text({ optional: true }),
     mpn: column.text({ optional: true }),
-    upc: column.text({ unique:true }),
+    upc: column.text({ unique: true }),
     ean: column.text({ optional: true }),
     isbn: column.text({ optional: true }),
     weight: column.number({ default: 0.0 }),
@@ -24,11 +24,8 @@ const Products = defineTable({
     customizable_fields: column.text({ optional: true }),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true }),
-    deleted_at: column.date({ optional: true }),
-  },
-  indexes: [
-    { on:["upc"], unique:true},
-  ]
+    deleted_at: column.date({ optional: true })
+  }
 });
 /* 
 
@@ -37,17 +34,14 @@ const Categories = defineTable({
     id: column.number({ primaryKey: true }),
     name:column.text({unique: true}),
     description: column.text({ optional: true }),
-    status: column.number({ references: () => Statuses.columns.id, default: 1 }),
+    status: column.boolean(),
     relations: column.number({ references: () => Category_Relations.columns.id, default: 1 }),
     logo: column.text({ optional: true }),
     main: column.boolean({ default: false }),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true }),
-    deleted_at: column.date({ optional: true }),
-  },
-  indexes: [
-    { on:["name"], unique:true},
-  ]
+    deleted_at: column.date({ optional: true })
+  }
 });
 
 const Images = defineTable({
@@ -56,13 +50,21 @@ const Images = defineTable({
     name: column.text({ unique: true }),
     image_url: column.text({ optional: true }),
     image_thumbnail: column.text({ optional: true }),
+    possition: column.number(),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true }),
-    deleted_at: column.date({ optional: true }),
-  },
-  indexes: [
-    { on: ["name"], unique: true },
-  ]
+    deleted_at: column.date({ optional: true })
+  }
+});
+
+const Aestetics = defineTable({
+  columns: {
+    id: column.number({ primaryKey: true }),
+    name:column.text({unique: true}),
+    description:column.text(),
+    created_at: column.date({ default: NOW }),
+    updated_at: column.date({ optional: true })
+  }
 });
 
 const Product_Relations = defineTable({
@@ -74,13 +76,24 @@ const Product_Relations = defineTable({
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true })
   }
-})
+});
 
 const Category_Relations = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
-    parent_id: column.number({ references: () => Categories.columns.id }),
-    child_id: column.number({ references: () => Categories.columns.id }),
+    parent_id: column.number(),
+    child_id: column.number(),
+    created_at: column.date({ default: NOW }),
+    updated_at: column.date({ optional: true })
+  }
+});
+
+const Aestetic_Relations = defineTable({
+  columns: {
+    id: column.number({ primaryKey: true }),
+    aestetics_grade: column.number({ references: () => Aestetics.columns.id }),
+    product_id: column.number({ references: () => Products.columns.id }),
+    quantity: column.number(),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true })
   }
@@ -213,13 +226,14 @@ const Users = defineTable({
     active: column.boolean({ default: true }),
     level: column.number({ default: 0 }),
     avatar: column.text({ optional: true }),
-    created_at: column.date({ default: NOW }),
-    updated_at: column.date({ optional: true }),
-    deleted_at: column.date({ optional: true })
-  },
-  indexes: [
-    { on:["name","email"], unique:true},
-  ]
+    emailVerified: column.boolean({ default: false }),
+    verificationToken: column.text({ optional: true }),
+    resetToken: column.text({ optional: true }),
+    resetTokenExpiry: column.date({ optional: true }),
+    createdAt: column.date({ default: NOW }),
+    updatedAt: column.date({ optional: true }),
+    deleted_at: column.date({ optional: true }),
+  }
 });
 
 const Sellers = defineTable({
@@ -231,16 +245,48 @@ const Sellers = defineTable({
     code: column.text({ optional: true }),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true })
-  },
-  indexes: [
-    { on:["name","email"], unique:true},
-  ]
-}) */
+  }
+});
+
+const Prices = defineTable({
+  columns: {
+    id:column.number({primaryKey:true}),
+    product_id: column.number(),
+    last: column.number(),
+    cost: column.number(),
+    tax:  column.number(),
+    profit: column.number(),
+    extra_profit: column.number(),
+    price: column.number(),
+    created_at: column.date({ default: NOW }),
+    updated_at: column.date({ optional: true })
+  }
+});
+
+const Stocks = defineTable({
+  columns: {
+    id: column.number({primaryKey:true}),
+    product_id: column.number({references: () => Products.columns.id}),
+    quantity:column.number(),
+    warehouse_id:column.number(),
+    created_at: column.date({ default: NOW }),
+    updated_at: column.date({ optional: true })
+  }
+});
+
+const Warehouses = defineTable ({
+  columns: {
+    id: column.number({primaryKey:true}),
+    name: column.text(),
+    created_at: column.date({ default: NOW }),
+    updated_at: column.date({ optional: true })
+  }
+})*/
 
 // https://astro.build/db/config
 export default defineDb({
   tables: {
-    Products, 
+    Products,
     // Categories, 
     // Category_Relations, 
     // Product_Relations,

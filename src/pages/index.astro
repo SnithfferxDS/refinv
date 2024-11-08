@@ -1,15 +1,72 @@
 ---
-<<<<<<< HEAD
 import Layout from "../layouts/guest.astro";
 import { APP_NAME, APP_VERSION, APP_DESC } from "../configs/constants";
-=======
-import Layout from '../layouts/Guest.Layout.astro';
-import ProductList from '../components/ProductList.astro';
-import AddProduct from '../components/AddProduct.astro';
->>>>>>> 83610288edd8c71fff1c00023d7f64717a6e6de7
+import ProductCard from "../components/ProductCard.astro";
+import { eq, db, desc } from "astro:db";
+import { Products } from "astro:db";
+// Get recent products with their main image
+const products = await db
+	.select({
+		id: Products.id,
+		name: Products.name,
+		short_description: Products.short_description,
+	})
+	.from(Products)
+	.orderBy(desc(Products.created_at))
+	.limit(4);
+/*
+	image_url: Images.image_url,
+	price: Prices.price,
+import { Images } from "astro:db";
+import { Prices } from "astro:db";
+import { Product_Relations } from "astro:db";
+
+	.leftJoin(Images, eq(Images.id, Product_Relations.image_id))
+	.leftJoin(Prices, eq(Prices.product_id, Products.id))
+	.leftJoin(Product_Relations, eq(Product_Relations.product_id, Products.id))
+,
+
+{products.map((product) => (
+          <ProductCard
+            id={product.id}
+            name={product.name}
+            short_description={product.short_description}
+            image_url=`assets/img/products/${product.image_url}`
+            price={product.price} // TODO: Add price to products table and use real price
+          />
+        ))
+      }
+      const products = [
+      {id:1,name:"iPhone 3", short_description:"iphone 3",image_url:"234445",price: 450.85},
+      {id:2,name:"iPhone 4", short_description:"iphone 4",image_url:"2345", price:550.90}
+      ];
+*/
 ---
 
-<Layout title="Electronics Inventory">
+<Layout title="Home">
+	<div class="container mx-auto px-4 py-8">
+		<h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+			Latest Products
+		</h1>
+
+		<div
+			class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+		>
+			{
+				products.map((product) => (
+					<ProductCard
+						id={product.id}
+						name={product.name}
+						short_description={
+							product.short_description ?? undefined
+						}
+						image_url={undefined}
+						price={0.0}
+					/>
+				))
+			}
+		</div>
+	</div>
 	<div class="min-h-screen">
 		<nav
 			class="container mx-auto px-6 py-4 flex justify-between items-center"

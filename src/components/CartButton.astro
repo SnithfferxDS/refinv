@@ -1,0 +1,23 @@
+---
+interface Props {
+  productId: number;
+  className?: string;
+}
+
+const { productId, className = '' } = Astro.props;
+---
+
+<button
+  type="button"
+  class={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${className}`}
+  onclick={`addToCart(${productId})`}
+>
+  Add to Cart
+</button>
+
+<script>
+  function addToCart(productId: number) {
+    // TODO: Implement cart functionality with local storage or server-side session
+    console.log(`Adding product ${productId} to cart`);
+  }
+</script>

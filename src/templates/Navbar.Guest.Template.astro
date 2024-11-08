@@ -1,0 +1,125 @@
+---
+import ColorModeSwitch from '../components/ColorModeSwitch.astro';
+const APP_NAME = 'Refinv';
+const APP_VERSION = '1.0';
+
+// TODO: Implement actual auth check
+const isAuthenticated = false;
+---
+
+<nav class="fixed z-30 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+  <div class="px-3 py-3 lg:px-5 lg:pl-3">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center justify-start">
+        <a href="/" class="flex ml-2 md:mr-24">
+          <img src="/favicon.svg" class="h-8 mr-3" alt="Logo" />
+          <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
+            {APP_NAME} <span class="text-sm">v{APP_VERSION}</span>
+          </span>
+        </a>
+      </div>
+      <div class="flex items-center">
+        <div class="hidden lg:flex items-center">
+          <a href="/" class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Home</a>
+          
+          {isAuthenticated && (
+            <a href="/dashboard" class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Dashboard</a>
+          )}
+        </div>
+
+        <ColorModeSwitch />
+
+        {isAuthenticated ? (
+          <div class="flex items-center ml-3">
+            <!-- Notifications -->
+            <button
+              type="button"
+              data-dropdown-toggle="notification-dropdown"
+              class="p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-gray-100 dark:text-gray-400 dark:hover:text-white dark:hover:bg-gray-700"
+            >
+              <span class="sr-only">View notifications</span>
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
+              </svg>
+            </button>
+            
+            <!-- User menu -->
+            <div class="ml-3">
+              <button
+                type="button"
+                class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                id="user-menu-button"
+                aria-expanded="false"
+                data-dropdown-toggle="dropdown"
+              >
+                <span class="sr-only">Open user menu</span>
+                <img class="w-8 h-8 rounded-full" src="https://ui-avatars.com/api/?name=User" alt="user photo" />
+              </button>
+              <!-- Dropdown menu -->
+              <div
+                class="hidden z-50 my-4 w-56 text-base list-none bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700 dark:divide-gray-600"
+                id="dropdown"
+              >
+                <div class="py-3 px-4">
+                  <span class="block text-sm font-semibold text-gray-900 dark:text-white">User Name</span>
+                  <span class="block text-sm text-gray-900 truncate dark:text-white">name@email.com</span>
+                </div>
+                <ul class="py-1 text-gray-700 dark:text-gray-300" aria-labelledby="dropdown">
+                  <li>
+                    <a href="/dashboard" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Dashboard</a>
+                  </li>
+                  <li>
+                    <a href="/profile" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Profile</a>
+                  </li>
+                  <li>
+                    <a href="/settings" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-400 dark:hover:text-white">Settings</a>
+                  </li>
+                </ul>
+                <ul class="py-1 text-gray-700 dark:text-gray-300">
+                  <li>
+                    <a href="/auth/logout" class="block py-2 px-4 text-sm hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Sign out</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div class="flex items-center ml-3">
+            <a href="/auth/login" class="text-gray-800 dark:text-white hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">Login</a>
+            <a href="/auth/register" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 ml-2">Register</a>
+          </div>
+        )}
+
+        <!-- Mobile menu button -->
+        <button
+          data-collapse-toggle="mobile-menu"
+          type="button"
+          class="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+        >
+          <span class="sr-only">Open main menu</span>
+          <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+          </svg>
+          <svg class="hidden w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Mobile menu -->
+  <div class="hidden lg:hidden" id="mobile-menu">
+    <ul class="pt-2">
+      <li>
+        <a href="/" class="block py-2 px-4 text-base font-normal text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Home</a>
+      </li>
+      {isAuthenticated && (
+        <li>
+          <a href="/dashboard" class="block py-2 px-4 text-base font-normal text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700">Dashboard</a>
+        </li>
+      )}
+    </ul>
+  </div>
+</nav>

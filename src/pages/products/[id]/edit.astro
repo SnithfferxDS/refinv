@@ -1,0 +1,228 @@
+---
+import { db, eq } from 'astro:db';
+import Layout from '../../../layouts/App.Layout.astro';
+
+const { id } = Astro.params;
+const product = await db.select().from('products').where(eq('products.id', id)).get();
+const brands = await db.select().from('brands');
+const categories = await db.select().from('categories');
+
+if (!product) {
+  return Astro.redirect('/products');
+}
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const name = formData.get('name')?.toString();
+  const description = formData.get('description')?.toString();
+  const sku = formData.get('sku')?.toString();
+  const brand_id = parseInt(formData.get('brand_id')?.toString() || '0');
+  const weight = parseFloat(formData.get('weight')?.toString() || '0');
+  const width = parseFloat(formData.get('width')?.toString() || '0');
+  const height = parseFloat(formData.get('height')?.toString() || '0');
+  const length = parseFloat(formData.get('length')?.toString() || '0');
+  const measure_unit = formData.get('measure_unit')?.toString() || 'mm';
+
+  if (name) {
+    await db.update('products').set({
+      name,
+      description,
+      sku,
+      brand_id,
+      weight,
+      width,
+      height,
+      length,
+      measure_unit,
+    }).where(eq('products.id', id));
+
+    // Update category relations
+    await db.delete('product_relations').where(eq('product_relations.product_id', id));
+    const selectedCategories = formData.getAll('categories');
+    for (const categoryId of selectedCategories) {
+      await db.insert('product_relations').values({
+        product_id: parseInt(id),
+        category_id: parseInt(categoryId.toString())
+      });
+    }
+
+    return Astro.redirect('/products');
+  }
+}
+
+// Get current category relations
+const productCategories = await db.select()
+  .from('product_relations')
+  .where(eq('product_relations.product_id', id));
+
+const selectedCategoryIds = productCategories.map(pc => pc.category_id);
+---
+
+<Layout title="Edit Product">
+  <div class="max-w-2xl mx-auto">
+    <form method="POST" class="space-y-6">
+      <div class="grid grid-cols-1 gap-6">
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Name</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            value={product.name}
+            required
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+
+        <div>
+          <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Description</label>
+          <textarea
+            name="description"
+            id="description"
+            rows="3"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          >{product.description}</textarea>
+        </div>
+
+        <div>
+          <label for="sku" class="block text-sm font-medium text-gray-700 dark:text-gray-200">SKU</label>
+          <input
+            type="text"
+            name="sku"
+            id="sku"
+            value={product.sku}
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          />
+        </div>
+
+        <div>
+          <label for="brand_id" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Brand</label>
+          <select
+            name="brand_id"
+            id="brand_id"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          >
+            <option value="">Select a brand</option>
+            {brands.map((brand) => (
+              <option value={brand.id} selected={brand.id === product.brand_id}>{brand.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label for="categories" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Categories</label>
+          <select
+            name="categories"
+            id="categories"
+            multiple
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          >
+            {categories.map((category) => (
+              <option 
+                value={category.id} 
+                selected={selectedCategoryIds.includes(category.id)}
+              >
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label for="weight" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Weight</label>
+            <input
+              type="number"
+              step="0.01"
+              name="weight"
+              id="weight"
+              value={product.weight}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label for="measure_unit" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Measure Unit</label>
+            <select
+              name="measure_unit"
+              id="measure_unit"
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            >
+              <option value="mm" selected={product.measure_unit === 'mm'}>Millimeters (mm)</option>
+              <option value="cm" selected={product.measure_unit === 'cm'}>Centimeters (cm)</option>
+              <option value="m" selected={product.measure_unit === 'm'}>Meters (m)</option>
+              <option value="in" selected={product.measure_unit === 'in'}>Inches (in)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label for="width" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Width</label>
+            <input
+              type="number"
+              step="0.01"
+              name="width"
+              id="width"
+              value={product.width}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label for="height" class="block text-sm font-medium text-gray-700<boltAction type="file" filePath="src/pages/products/[id]/edit.astro">            <label for="height" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Height</label>
+            <input
+              type="number"
+              step="0.01"
+              name="height"
+              id="height"
+              value={product.height}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label for="length" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Length</label>
+            <input
+              type="number"
+              step="0.01"
+              name="length"
+              id="length"
+              value={product.length}
+              class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-between">
+        <button
+          type="submit"
+          class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Update Product
+        </button>
+        <button
+          type="button"
+          class="inline-flex justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          onclick="deleteProduct()"
+        >
+          Delete Product
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script define:vars={{ id }}>
+    async function deleteProduct() {
+      if (confirm('Are you sure you want to delete this product?')) {
+        const response = await fetch(`/api/products/${id}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          window.location.href = '/products';
+        }
+      }
+    }
+  </script>
+</Layout>

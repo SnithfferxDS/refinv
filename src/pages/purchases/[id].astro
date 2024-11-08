@@ -1,0 +1,164 @@
+---
+import { db, eq } from 'astro:db';
+import Layout from '../../layouts/App.Layout.astro';
+
+const { id } = Astro.params;
+const purchase = await db.select()
+  .from('purchases')
+  .leftJoin('suppliers', 'purchases.supplier_id', 'suppliers.id')
+  .where(eq('purchases.id', id))
+  .get();
+
+if (!purchase) {
+  return Astro.redirect('/purchases');
+}
+
+const purchaseDetails = await db.select()
+  .from('purchase_details')
+  .leftJoin('products', 'purchase_details.product_id', 'products.id')
+  .where(eq('purchase_details.invoice_number', purchase.number));
+
+if (Astro.request.method === 'POST') {
+  // Process the purchase and update stock
+  await db.update('purchases')
+    .set({ procesed: true, procesed_date: new Date() })
+    .where(eq('purchases.id', id));
+
+  for (const detail of purchaseDetails) {
+    // Update or create stock record
+    const existingStock = await db.select()
+      .from('stock')
+      .where(eq('stock.product_id', detail.product_id))
+      .get();
+
+    if (existingStock) {
+      await db.update('stock')
+        .set({ quantity: existingStock.quantity + detail.quantity })
+        .where(eq('stock.product_id', detail.product_id));
+    } else {
+      await db.insert('stock').values({
+        product_id: detail.product_id,
+        quantity: detail.quantity
+      });
+    }
+
+    // Mark purchase detail as processed
+    await db.update('purchase_details')
+      .set({ procesed: true })
+      .where(eq('purchase_details.id', detail.id));
+  }
+
+  return Astro.redirect('/purchases');
+}
+---
+
+<Layout title={`Purchase ${purchase.number}`}>
+  <div class="max-w-4xl mx-auto">
+    <div class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Purchase Details</h3>
+      </div>
+      <div class="border-t border-gray-200 dark:border-gray-700">
+        <dl>
+          <div class="bg-gray-50 dark:bg-gray-900 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Purchase Number</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{purchase.number}</dd>
+          </div>
+          <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Date</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+              {new Date(purchase.purchase_date).toLocaleDateString()}
+            </dd>
+          </div>
+          <div class="bg-gray-50 dark:bg-gray-900 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Supplier</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{purchase.supplier_name}</dd>
+          </div>
+          <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Status</dt>
+            <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
+              <span class={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                ${purchase.procesed 
+                  ? 'bg-green-100 text-green-800' 
+                  : 'bg-yellow-100 text-yellow-800'}`}
+              >
+                {purchase.procesed ? 'Processed' : 'Pending'}
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <h4 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Products</h4>
+      <div class="flex flex-col">
+        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <div class="shadow overflow-hidden border-b border-gray-200 dark:border-gray-700 sm:rounded-lg">
+              <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-50 dark:bg-gray-900">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Product
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Quantity
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Price
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Total
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  {purchaseDetails.map((detail) => (
+                    <tr>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                        {detail.product_name}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {detail.quantity}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        ${detail.price.toFixed(2)}
+                      </td>
+                      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        ${(detail.quantity * detail.price).toFixed(2)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr class="bg-gray-50 dark:bg-gray-900">
+                    <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white text-right">
+                      Total:
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                      ${purchase.total.toFixed(2)}
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {!purchase.procesed && (
+      <div class="mt-8">
+        <form method="POST">
+          <button
+            type="submit"
+            class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            Process Purchase
+          </button>
+        </form>
+      </div>
+    )}
+  </div>
+</Layout>

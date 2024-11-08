@@ -1,11 +1,12 @@
 ---
-import Layout from './Main.Layout.astro'
-import Navbar from '../templates/Navbar.Template.astro';
-import Footer from '../templates/Footer.Template.astro';
+import Layout from './Main.Layout.astro';
+import Navbar from '../templates/Navbar.Guest.Template.astro';
+import Footer from '../templates/Footer.Guest.Template.astro';
 
 interface Props {
     title: string;
 }
+
 const { title } = Astro.props;
 ---
 <Layout title={title}>
@@ -15,7 +16,7 @@ const { title } = Astro.props;
         class="flex pt-16 overflow-hidden text-gray-800 bg-gray-50 dark:text-white dark:bg-gray-800">
         <div id="main-content" class="relative w-full h-full min-h-screen max-w-screen-2xl mx-auto overflow-y-auto bg-gray-50/80 dark:bg-gray-800/80 shadow-md">
             <!-- BREADCRUMBS -->
-            <div class="px-4 pt-2 2x1:px-0 rounded-md"></div>
+            <div class="px-4 pt-2 2x1:px-0 rounded-md">
                 <slot />
             </div>
             <!-- FOOTER -->

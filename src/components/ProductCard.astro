@@ -1,0 +1,58 @@
+---
+interface Props {
+  id: number;
+  name: string;
+  short_description?: string;
+  image_url?: string;
+  price: number;
+}
+
+const { id, name, short_description, image_url, price = 0 } = Astro.props;
+const defaultImage = '/placeholder-product.jpg';
+---
+
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+  <div class="relative aspect-square overflow-hidden">
+    <img
+      src={image_url || defaultImage}
+      alt={name}
+      class="w-full h-full object-cover transform hover:scale-105 transition-transform duration-300"
+    />
+  </div>
+  <div class="p-4">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-2 truncate">
+      {name}
+    </h3>
+    {short_description && (
+      <p class="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
+        {short_description}
+      </p>
+    )}
+    <div class="flex items-center justify-between mt-4">
+      <span class="text-xl font-bold text-gray-900 dark:text-white">
+        $ {price.toFixed(2)}
+      </span>
+      <div class="space-x-2">
+        <button
+          class="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200"
+          onclick={`addToCart(${id})`}
+        >
+          Add to Cart
+        </button>
+        <a
+          href={`/products/${id}`}
+          class="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+        >
+          View Details
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function addToCart(productId: number) {
+    // TODO: Implement cart functionality
+    console.log(`Adding product ${productId} to cart`);
+  }
+</script>

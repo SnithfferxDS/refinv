@@ -1,0 +1,95 @@
+---
+import { db, eq,Categories } from 'astro:db';
+import Layout from '../../../layouts/App.Layout.astro';
+
+const { id } = Astro.params;
+const category = await db.select().from(Categories).where(eq(Categories.id, id)).get();
+
+if (!category) {
+  return Astro.redirect('/categories');
+}
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const name = formData.get('name')?.toString();
+  const description = formData.get('description')?.toString();
+  const main = formData.get('main') === 'on';
+
+  if (name) {
+    await db.update(Categories).set({
+      name,
+      description,
+      main,
+    }).where(eq(Categories.id, id));
+    return Astro.redirect('/categories');
+  }
+}
+---
+
+<Layout title="Edit Category">
+  <div class="max-w-2xl mx-auto">
+    <form method="POST" class="space-y-6">
+      <div>
+        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Name</label>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          value={category.name}
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+
+      <div>
+        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-200">Description</label>
+        <textarea
+          name="description"
+          id="description"
+          rows="3"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        >{category.description}</textarea>
+      </div>
+
+      <div class="flex items-center">
+        <input
+          type="checkbox"
+          name="main"
+          id="main"
+          checked={category.main}
+          class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+        />
+        <label for="main" class="ml-2 block text-sm text-gray-700 dark:text-gray-200">Main Category</label>
+      </div>
+
+      <div class="flex justify-between">
+        <button
+          type="submit"
+          class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Update Category
+        </button>
+        <button
+          type="button"
+          class="inline-flex justify-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+          onclick="deleteCategory()"
+        >
+          Delete Category
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script define:vars={{ id }}>
+    async function deleteCategory() {
+      if (confirm('Are you sure you want to delete this category?')) {
+        const response = await fetch(`/api/categories/${id}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          window.location.href = '/categories';
+        }
+      }
+    }
+  </script>
+</Layout>
