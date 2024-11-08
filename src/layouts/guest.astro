@@ -1,0 +1,42 @@
+---
+import Layout from "./main.astro";
+import Footer from "../templates/footer.guest.astro";
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<Layout title={title}>
+	<!-- NAVBAR -->
+	<div
+		class="flex
+        overflow-hidden
+        text-gray-800
+        dark:text-white
+        bg-gradient-to-b from-primary-400 to-secondary-400
+        dark:from-primary-100 dark:to-secondary-200"
+	>
+		<div
+			id="main-content"
+			class="relative
+            w-full
+            h-full
+            min-h-screen
+            max-w-screen-2xl
+            mx-auto
+            overflow-y-auto
+            shadow-md"
+		>
+			<!-- BREADCRUMBS -->
+
+			<div class="px-4 pt-2 2x1:px-0 rounded-md">
+				<slot />
+			</div>
+			<!-- FOOTER -->
+			<Footer />
+		</div>
+	</div>
+</Layout>
