@@ -1,23 +1,114 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import ProductList from '../components/ProductList.astro';
-import AddProduct from '../components/AddProduct.astro';
+import Layout from "../layouts/guest.astro";
+import { APP_NAME, APP_VERSION, APP_DESC } from "../configs/constants";
 ---
 
 <Layout title="Electronics Inventory">
-	<main class="container mx-auto px-4 py-8">
-		<h1 class="text-4xl font-bold text-center mb-8">Electronics Inventory Management</h1>
-		
-		<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-			<div>
-				<h2 class="text-2xl font-semibold mb-4">Add New Product</h2>
-				<AddProduct />
+	<div class="min-h-screen">
+		<nav
+			class="container mx-auto px-6 py-4 flex justify-between items-center"
+		>
+			<h1 class="text-2xl font-bold text-white">
+				{APP_NAME} v{APP_VERSION}
+			</h1>
+			<a
+				href="/dashboard"
+				class="bg-primary
+				text-gray-100
+				dark:text-white
+				dark:bg-primary-400
+				px-6
+				py-2
+				rounded-lg
+				font-medium
+				hover:bg-opacity-90
+				transition-colors"
+			>
+				Iniciar Sesión
+			</a>
+		</nav>
+
+		<main class="container mx-auto px-6 pt-20">
+			<div class="grid grid-cols-2 gap-12 items-center">
+				<div>
+					<h2 class="text-5xl font-bold text-white mb-6">
+						{APP_DESC}
+					</h2>
+					<p class="text-lg text-gray-300 mb-8">
+						Transform your business data into actionable insights
+						with our powerful analytics dashboard. Monitor
+						performance, track growth, and make data-driven
+						decisions.
+					</p>
+					<div class="flex gap-4">
+						<a
+							href="/dashboard"
+							class="bg-primary-500 text-white px-8 py-3 rounded-lg font-medium hover:bg-primary-600 transition-colors"
+						>
+							Get Started
+						</a>
+						<a
+							href="#features"
+							class="border border-white text-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-primary transition-colors"
+						>
+							Learn More
+						</a>
+					</div>
+				</div>
+				<div class="relative">
+					<div
+						class="absolute -inset-4 bg-gradient-to-r from-primary-500 to-purple-500 rounded-lg opacity-30 blur-lg"
+					>
+					</div>
+					<img
+						src="/dashboard-preview.png"
+						alt="Dashboard Preview"
+						class="relative rounded-lg shadow-2xl"
+					/>
+				</div>
 			</div>
-			
-			<div>
-				<h2 class="text-2xl font-semibold mb-4">Product List</h2>
-				<ProductList />
-			</div>
-		</div>
-	</main>
+
+			<section id="features" class="py-20">
+				<h3 class="text-3xl font-bold text-white text-center mb-12">
+					Key Features
+				</h3>
+				<div class="grid grid-cols-3 gap-8">
+					{
+						[
+							{
+								icon: "insights",
+								title: "Real-time Analytics",
+								description:
+									"Monitor your business metrics in real-time with interactive dashboards",
+							},
+							{
+								icon: "group",
+								title: "Customer Insights",
+								description:
+									"Understand your customers better with detailed demographic data",
+							},
+							{
+								icon: "trending_up",
+								title: "Growth Tracking",
+								description:
+									"Track your business growth with comprehensive reporting tools",
+							},
+						].map((feature) => (
+							<div class="bg-white bg-opacity-10 p-6 rounded-lg">
+								<span class="material-symbols-outlined text-4xl text-primary-400 mb-4">
+									{feature.icon}
+								</span>
+								<h4 class="text-xl font-semibold text-white mb-2">
+									{feature.title}
+								</h4>
+								<p class="text-gray-300">
+									{feature.description}
+								</p>
+							</div>
+						))
+					}
+				</div>
+			</section>
+		</main>
+	</div>
 </Layout>
