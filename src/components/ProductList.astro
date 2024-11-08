@@ -1,109 +1,103 @@
 ---
+import { db, Products } from "astro:db";
+const products = await db.select().from(Products).all();
 ---
 
-<div class="bg-white shadow-md rounded-lg p-6">
-  <div id="productList" class="space-y-4">
-    Loading products...
-  </div>
-</div>
-
+<!-- <div class="bg-white shadow-md rounded-lg p-6">
+	<div id="productList" class="space-y-4">Loading products...</div>
+</div> -->
+<table class="min-w-full divide-y divide-slate-300">
+	<thead class="bg-slate-900 text-white">
+		<tr>
+			<th
+				scope="col"
+				class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold"
+				>Name</th
+			>
+			<th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold"
+				>Description</th
+			>
+			<th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+				<span class="sr-only">Actions</span>
+			</th>
+		</tr>
+	</thead>
+	<tbody
+		class="divide-y divide-slate-300 bg-gray-200 dark:divide-slate-700 dark:bg-slate-600"
+	>
+		{
+			products.map((product) => (
+				<tr>
+					<td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-slate-900 dark:text-gray-100">
+						<div class="border p-4 rounded-lg">
+							<h3 class="font-semibold">{product.name}</h3>
+							<p class="text-gray-600">"No description"</p>
+							<div class="flex justify-between mt-2">
+								<span class="text-green-600">$ 0.00</span>
+								<span class="text-blue-600">Stock: 0</span>
+							</div>
+							<div class="mt-2 space-x-2">
+								<button
+									onclick={`handleTransaction(${product.id}, 'sale')`}
+									class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 disabled:bg-gray-400"
+								>
+									Sell
+								</button>
+								<button
+									onclick={`handleTransaction(${product.id}, 'purchase')`}
+									class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+								>
+									Purchase
+								</button>
+							</div>
+						</div>
+					</td>
+					<td />
+					<td />
+				</tr>
+			))
+		}
+	</tbody>
+</table>
 <script>
-  async function loadProducts() {
-    try {
-      const response = await fetch('http://localhost:3000/api/products');
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const products = await response.json();
-      
-      const productList = document.getElementById('productList');
-      if (!productList) return;
-      
-      if (!products.length) {
-        productList.innerHTML = '<p class="text-gray-500">No products available.</p>';
-        return;
-      }
+	async function handleTransaction(productId: Number, type: String) {
+		const userInput = prompt(`Enter quantity to ${type}:`);
+		if (!userInput) return;
+		const quantity = parseInt(userInput);
+		if (isNaN(quantity) || quantity <= 0) {
+			alert("Please enter a valid quantity");
+			return;
+		}
 
-      productList.innerHTML = products.map((product: {
-        name: string;
-        description?: string;
-        price: number;
-        stock: number;
-        id: number;
-      }) => `
-        <div class="border p-4 rounded-lg">
-          <h3 class="font-semibold">${product.name}</h3>
-          <p class="text-gray-600">${product.description || 'No description'}</p>
-          <div class="flex justify-between mt-2">
-            <span class="text-green-600">$${product.price.toFixed(2)}</span>
-            <span class="text-blue-600">Stock: ${product.stock}</span>
-          </div>
-          <div class="mt-2 space-x-2">
-            <button 
-              onclick="handleTransaction(${product.id}, 'sale')"
-              class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 disabled:bg-gray-400"
-              ${product.stock <= 0 ? 'disabled' : ''}>
-              Sell
-            </button>
-            <button 
-              onclick="handleTransaction(${product.id}, 'purchase')"
-              class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
-              Purchase
-            </button>
-          </div>
-        </div>
-      `).join('');
-    } catch (error) {
-      console.error('Error loading products:', error);
-      const productList = document.getElementById('productList');
-      if (!productList) return;
-      productList.innerHTML = '<p class="text-red-500">Error loading products. Please try again later.</p>';
-    }
-  }
+		const price = parseFloat(prompt(`Enter price per unit:`) || "0");
+		if (!price || isNaN(price) || price <= 0) {
+			alert("Please enter a valid price");
+			return;
+		}
 
-  async function handleTransaction(productId:Number, type:String) {
-    const userInput = prompt(`Enter quantity to ${type}:`);
-    if (!userInput) return;
-    const quantity = parseInt(userInput);
-    if (isNaN(quantity) || quantity <= 0) {
-      alert('Please enter a valid quantity');
-      return;
-    }
+		try {
+			const response = await fetch(
+				"http://localhost:3000/api/transactions",
+				{
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify({
+						product_id: productId,
+						type,
+						quantity: quantity,
+						price: price,
+					}),
+				},
+			);
 
-    const price = parseFloat(prompt(`Enter price per unit:`) || '0');
-    if (!price || isNaN(price) || price <= 0) {
-      alert('Please enter a valid price');
-      return;
-    }
-
-    try {
-      const response = await fetch('http://localhost:3000/api/transactions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          product_id: productId,
-          type,
-          quantity: quantity,
-          price: price
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      await loadProducts();
-    } catch (error) {
-      console.error('Error processing transaction:', error);
-      alert('Error processing transaction. Please try again.');
-    }
-  }
-
-  // Initial load
-  loadProducts();
-
-  // Listen for refresh events
-  document.addEventListener('refreshProducts', loadProducts);
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+		} catch (error) {
+			console.error("Error processing transaction:", error);
+			alert("Error processing transaction. Please try again.");
+		}
+	}
 </script>

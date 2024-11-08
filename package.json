@@ -1,15 +1,20 @@
 {
-  "name": "electronics-inventory",
+  "name": "sipi",
+  "description": "Sipi is an open source inventory for imported products.",
   "type": "module",
   "version": "0.0.1",
   "private": true,
+  "author": {
+    "name": "Bytes4Run",
+    "email": "info@bytes4run.com",
+    "url": "https://bytes4run.com"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro",
-    "server": "node server/index.js"
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/db": "^0.14.3",
@@ -25,8 +30,11 @@
     "flowbite-typography": "^1.0.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.4.1",
+    "recharts": "^2.13.3",
     "sweetalert2": "^11.14.4",
     "tailwind-scrollbar": "^3.1.0",
-    "tailwindcss": "^3.4.14"
+    "tailwindcss": "^3.4.14",
+    "zustand": "^5.0.1"
   }
 }

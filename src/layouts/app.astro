@@ -1,0 +1,40 @@
+---
+import Layout from "./main.astro";
+import Sidebar from "../components/Sidebar";
+import AuthGuard from "../components/AuthGuard";
+import Footer from "../templates/footer.app.astro";
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<Layout title={title}>
+	<Sidebar client:load />
+	<div class="flex pt-8 overflow-hidden bg-gray-50 dark:bg-gray-700">
+		<div
+			id="main-content"
+			class="relative
+            w-full
+            h-full
+            overflow-y-auto
+            bg-gray-50
+            md:ml-64 lg:ml-64
+            dark:bg-gray-700/75
+            min-h-screen"
+		>
+			<div class="p-4">
+				<slot />
+			</div>
+			<Footer />
+		</div>
+		<!--AuthGuard-- client:load>
+    </!--AuthGuard-->
+	</div>
+</Layout>
+<link
+	href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+	rel="stylesheet"
+/>

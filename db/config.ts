@@ -4,8 +4,8 @@ const Products = defineTable({
   columns: {
     id: column.number({ primaryKey: true }),
     name: column.text(),
+    handle: column.text({ optional: true }),
     description: column.text({ optional: true }),
-    title: column.text({ optional: true }),
     short_description: column.text({ optional: true }),
     tags: column.json(),
     sku: column.text({ optional: true }),
@@ -20,15 +20,14 @@ const Products = defineTable({
     inner_diameter: column.number({ default: 0.0 }),
     outer_diameter: column.number({ default: 0.0 }),
     measure_unit: column.text({ default: 'mm' }),
-    brand_id: column.number({ references: () => Brands.columns.id }),
     customizable: column.boolean({ optional: true }),
     customizable_fields: column.text({ optional: true }),
-    status: column.number({ references: () => Statuses.columns.id, default: 1 }),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true }),
     deleted_at: column.date({ optional: true })
   }
 });
+/* 
 
 const Categories = defineTable({
   columns: {
@@ -246,6 +245,7 @@ const Sellers = defineTable({
     code: column.text({ optional: true }),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true })
+<<<<<<< HEAD
   }
 });
 
@@ -283,11 +283,19 @@ const Warehouses = defineTable ({
     updated_at: column.date({ optional: true })
   }
 })
+=======
+  },
+  indexes: [
+    { on:["name","email"], unique:true},
+  ]
+}) */
+>>>>>>> 7fbb1da49af6d145583cbc80b17e4c46f4f645c4
 
 // https://astro.build/db/config
 export default defineDb({
   tables: {
     Products, 
+<<<<<<< HEAD
     Categories, 
     Category_Relations, 
     Product_Relations,
@@ -306,5 +314,20 @@ export default defineDb({
     Stocks,
     Warehouses,
     Aestetics
+=======
+    // Categories, 
+    // Category_Relations, 
+    // Product_Relations,
+    // Suppliers,
+    // Statuses,
+    // Brands,
+    // Purchases,
+    // Purchase_Details,
+    // Sales,
+    // Sales_Details,
+    // Users,
+    // Sellers,
+    // Images
+>>>>>>> 7fbb1da49af6d145583cbc80b17e4c46f4f645c4
   },
 });

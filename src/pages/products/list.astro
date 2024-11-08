@@ -1,0 +1,39 @@
+---
+import BaseLayout from "../../layouts/app.astro";
+import Content from "../../components/ProductList.astro";
+---
+
+<BaseLayout title="Products">
+	<div class="sm:flex sm:items-center">
+		<div class="sm:flex-auto">
+			<h1 class="text-2xl font-semibold text-slate-900 dark:text-white">
+				Productos
+			</h1>
+		</div>
+		<div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+			<a
+				href="/products/create"
+				class="inline-flex items-center justify-center rounded-md border border-transparent bg-primary-400 px-4 py-2 text-sm font-medium text-gray-50 shadow-sm hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-primary-400/75 dark:hover:bg-primary-400 dark:focus:ring-primary-500"
+			>
+				Agregar Nueva
+			</a>
+		</div>
+	</div>
+	<div class="mt-8 flex flex-col">
+		<div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+			<div
+				class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
+			>
+				<div
+					class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+				>
+					<Content client:load />
+				</div>
+			</div>
+		</div>
+	</div>
+</BaseLayout>
+<link
+	href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+	rel="stylesheet"
+/>
