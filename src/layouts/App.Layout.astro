@@ -1,0 +1,26 @@
+---
+import Layout from './Main.Layout.astro'
+import Navbar from '../templates/Navbar.App.Template.astro';
+import Footer from '../templates/Footer.App.Template.astro';
+import Sidebar from '../templates/Sidebar.Template.astro';
+
+interface Props {
+    title: string;
+}
+const { title } = Astro.props;
+---
+<Layout title={title}>
+    <!-- SIDEBAR -->
+     <Sidebar />
+    <!-- NAVBAR -->
+     <Navbar />
+     <div
+        class="flex pt-16 overflow-hidden text-gray-800 bg-gray-50 dark:text-white dark:bg-gray-800">
+        <div id="main-content" class="relative w-full h-full min-h-screen max-w-screen-2xl mx-auto overflow-y-auto rounded-md m-3 lg:ml-[15.5rem] bg-gray-300 dark:bg-gray-800/80 shadow-md">
+            <!-- BREADCRUMBS -->
+            <slot />
+            <!-- FOOTER -->
+            <Footer />
+        </div>
+    </div>
+</Layout>

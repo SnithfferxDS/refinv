@@ -1,0 +1,100 @@
+<aside
+    id="sidebar"
+    class="fixed top-0 left-0 z-20 flex-col flex-shrink-0 hidden w-60 h-full font-normal duration-75 lg:flex drop-shadow-md transition-width shadow-md pt-16"
+    aria-label="Sidebar">
+    <div
+        class="relative flex flex-col flex-1 min-h-0 pt-0 border-r text-white bg-secondary-500/75 border-secondary-400/75 dark:bg-secondary-600/75 dark:border-secondary-500/75">
+        <div
+            class="flex flex-col flex-1 pt-5 pb-28 overflow-y-auto scrollbar scrollbar-w-2 scrollbar-thumb-rounded-[0.1667rem] scrollbar-thumb-slate-200 scrollbar-track-gray-400 dark:scrollbar-thumb-slate-900 dark:scrollbar-track-gray-800 ">
+            <div
+                class="flex-1 px-3 space-y-1 divide-y">
+                <ul class="pb-2 space-y-2">
+                    <li>
+                        <form action="/search" method="GET" class="lg:hidden">
+                            <label for="mobile-search" class="sr-only">Buscar</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                                            clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <input type="text" name="mobile-search" id="mobile-search"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                    placeholder="Buscar.." />
+                            </div>
+                        </form>
+                    </li>
+                    <!-- Home -->
+                    <li>
+                        <a href="/" class="
+                                flex
+                                items-center
+                                p-2
+                                text-base
+                                rounded-lg
+                                group
+                                transition
+                                duration-75
+                                focus:outline-offset-2
+                                text-gray-200
+                                hover:bg-gray-400
+                                focus:outline-bluish-600
+                                dark:hover:bg-gray-700
+                                bg-secondary-500/50
+                                border-secondary-400/50
+                                dark:bg-secondary-600/50
+                                dark:border-secondary-500/50
+                                ">
+                            <svg fill="currentColor" class="
+                                    w-6
+                                    h-6
+                                    " viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path
+                                    d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z">
+                                </path>
+                                <path
+                                    d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z">
+                                </path>
+                            </svg>
+                            <span class="ml-3" sidebar-toggle-item>Inicio</span>
+                        </a>
+                    </li>
+                    <!-- Dashboard -->
+                    <li>
+                        <a
+                            href="/dashboard"
+                            class="
+                            flex
+                            items-center
+                            p-2
+                            text-base
+                            rounded-lg
+                            group
+                            transition
+                            duration-75
+                            focus:outline-offset-2
+                            text-gray-200
+                            hover:bg-secondary-500/75
+                            focus:outline-bluish-600
+                            dark:text-gray-200
+                            dark:hover:bg-secondary-600/75
+                            border-secondary-500/50
+
+
+                        ">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
+                                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                            </svg>
+                            <span class="ml-3" sidebar-toggle-item>Panel</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</aside>
