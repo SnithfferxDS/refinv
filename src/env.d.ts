@@ -5,6 +5,7 @@ interface ImportMetaEnv {
   APP_NAME: string;
   APP_DESCRIPTION: string;
   APP_VERSION: string;
+  APP_SHORT_VERSION: string;
 }
 
 interface ImportMeta {
