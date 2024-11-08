@@ -1,0 +1,57 @@
+---
+import CopyrightNotice from "../components/CopyrightsNotice.astro";
+---
+
+<footer
+	class="md:flex md:items-center md:justify-between px-4 2xl:px-0 py-6 md:py-10"
+>
+	<CopyrightNotice />
+	<span
+		class="my-10
+            text-sm space-x-2
+            text-secondary-400
+            dark:text-secondary-900
+            text-center"
+	>
+		<a
+			href="https://astro.build/"
+			class="hover:text-purple-700 dark:hover:text-purple-800"
+		>
+			{Astro.generator}
+		</a>
+		<a
+			href="https://docs.astro.build/en/guides/astro-db/"
+			class="hover:text-purple-700 dark:hover:text-purple-800">Astro DB</a
+		>
+	</span>
+	<ul class="flex flex-wrap items-center justify-center">
+		<li>
+			<a
+				href="#"
+				class="mr-4 text-sm font-normal text-gray-500 hover:border-b-2 hover:border-primary-400 dark:hover:border-b-2 dark:hover:border-primary-200 md:mr-6 dark:text-gray-400"
+				>Terms</a
+			>
+		</li>
+		<li>
+			<a
+				href="#"
+				class="mr-4 text-sm font-normal text-gray-500 hover:border-b-2 hover:border-primary-400 dark:hover:border-b-2 dark:hover:border-primary-200 md:mr-6 dark:text-gray-400"
+				>Licensing</a
+			>
+		</li>
+		<li>
+			<a
+				href="#"
+				class="mr-4 text-sm font-normal text-gray-500 hover:border-b-2 hover:border-primary-400 dark:hover:border-b-2 dark:hover:border-primary-200 md:mr-6 dark:text-gray-400"
+				>Cookie Policy</a
+			>
+		</li>
+		<li>
+			<a
+				href="#"
+				class="text-sm font-normal text-gray-500 hover:border-b-2 hover:border-primary-400 dark:hover:border-b-2 dark:hover:border-primary-200 dark:text-gray-400"
+				>Contact</a
+			>
+		</li>
+	</ul>
+</footer>
