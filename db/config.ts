@@ -10,7 +10,7 @@ const Products = defineTable({
     tags: column.json(),
     sku: column.text({ optional: true }),
     mpn: column.text({ optional: true }),
-    upc: column.text({ unique:true }),
+    upc: column.text({ unique: true }),
     ean: column.text({ optional: true }),
     isbn: column.text({ optional: true }),
     weight: column.number({ default: 0.0 }),
@@ -245,7 +245,6 @@ const Sellers = defineTable({
     code: column.text({ optional: true }),
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true })
-<<<<<<< HEAD
   }
 });
 
@@ -282,39 +281,12 @@ const Warehouses = defineTable ({
     created_at: column.date({ default: NOW }),
     updated_at: column.date({ optional: true })
   }
-})
-=======
-  },
-  indexes: [
-    { on:["name","email"], unique:true},
-  ]
-}) */
->>>>>>> 7fbb1da49af6d145583cbc80b17e4c46f4f645c4
+})*/
 
 // https://astro.build/db/config
 export default defineDb({
   tables: {
-    Products, 
-<<<<<<< HEAD
-    Categories, 
-    Category_Relations, 
-    Product_Relations,
-    Aestetic_Relations,
-    Suppliers,
-    Statuses,
-    Brands,
-    Purchases,
-    Purchase_Details,
-    Sales,
-    Sales_Details,
-    Users,
-    Sellers,
-    Images,
-    Prices,
-    Stocks,
-    Warehouses,
-    Aestetics
-=======
+    Products,
     // Categories, 
     // Category_Relations, 
     // Product_Relations,
@@ -328,6 +300,5 @@ export default defineDb({
     // Users,
     // Sellers,
     // Images
->>>>>>> 7fbb1da49af6d145583cbc80b17e4c46f4f645c4
   },
 });
