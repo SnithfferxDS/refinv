@@ -1,0 +1,32 @@
+---
+import { APP_NAME, APP_VERSION } from "../configs/constants";
+
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<meta name="theme-color" content="#ff595e" />
+	<meta name="description" content="NexaVerse Dashboard" />
+	<meta name="viewport" content="width=device-width" />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<meta name="generator" content={Astro.generator} />
+	<title>{title} | {APP_NAME} v{APP_VERSION}</title>
+	<script is:inline>
+		if (
+			localStorage.getItem("color-theme") === "dark" ||
+			(!("color-theme" in localStorage) &&
+				window.matchMedia("(prefers-color-scheme: dark)").matches)
+		) {
+			document.documentElement.classList.add("dark");
+		} else {
+			document.documentElement.classList.remove("dark");
+		}
+	</script>
+</head>
