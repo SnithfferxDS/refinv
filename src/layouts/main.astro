@@ -1,0 +1,32 @@
+---
+import Head from "../templates/head.astro";
+interface Props {
+	title?: string;
+}
+
+const { title = "Home" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<Head title={title} />
+	<body
+		class="h-full
+        scrollbar
+        scrollbar-w-3
+        scrollbar-thumb-rounded-[0.25rem]
+        scrollbar-track-slate-200
+        scrollbar-thumb-gray-400
+        dark:scrollbar-track-gray-600
+        dark:scrollbar-thumb-gray-600
+        bg-white dark:bg-gray-800"
+	>
+		<slot />
+	</body>
+</html>
+<script>
+	import "flowbite";
+</script>
+<style is:global>
+	@import url("https://fonts.cdnfonts.com/css/inter");
+</style>
