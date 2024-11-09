@@ -1,0 +1,346 @@
+---
+import BaseLayout from "../../layouts/app.astro";
+import { saveData } from "../api/quotations/create";
+
+if (Astro.request.method === "POST") {
+	const formData = await Astro.request.formData();
+	let data = {
+		product: formData.get("quotationProductName"),
+		type: formData.get("quotationType"),
+		link: formData.get("quotationLink"),
+		store: formData.get("quotationStore"),
+		country: formData.get("quotationCountry"),
+		date: formData.get("quotationDeliveryDate"),
+		price: formData.get("quotationPrice"),
+		shipping: formData.get("quotationShipping"),
+		weight: formData.get("quotationWeight"),
+		quantity: formData.get("quotationQuantity"),
+	};
+	const result = await saveFastData(data);
+	return Astro.redirect(`/products/${result.id}/edit`);
+}
+---
+
+<BaseLayout title="Quotations | create">
+	<div class="mx-auto">
+		<div class="sm:flex sm:items-center">
+			<div class="sm:flex-auto">
+				<h1
+					class="text-2xl font-semibold text-gray-900 dark:text-white"
+				>
+					Cotización Rápida
+				</h1>
+			</div>
+			<!-- <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+				<a
+					href="/quotations/create"
+					class="inline-flex items-center justify-center rounded-md border border-transparent
+                    bg-primary-400 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-500"
+				>
+					Agregar Cotización
+				</a>
+			</div>
+			<div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+				<a
+					href="/quotations/create_fast"
+					class="inline-flex items-center justify-center rounded-md border border-transparent
+                    bg-secondary-400 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-secondary-500"
+				>
+					Cotización Rápida
+				</a>
+			</div> -->
+		</div>
+		<div class="mt-8 flex flex-col">
+			<form method="POST" class="space-y-6">
+				<section class="flex flex-col">
+					<div class="overflow-x-auto">
+						<div
+							class="relative shadow-md sm:rounded-lg bg-gray-50 dark:bg-gray-800"
+						>
+							<div
+								class="p-4 space-y-3 md:space-y-0 md:space-x-4 overflow-hidden"
+							>
+								<div class="grid grid-cols-12 gap-4">
+									<div class="col-span-12 sm:col-span-4">
+										<div
+											class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+										>
+											<img
+												class="rounded-t-lg w-full"
+												src="/img/photo_not_available.png"
+												alt="asset photo"
+											/>
+											<div
+												class="p-5 flex flex-col items-center"
+											>
+												<p
+													class="mb-3 font-normal text-gray-700 dark:text-gray-400"
+												>
+													Sin Imagen
+												</p>
+												<a
+													href="#"
+													class="inline-flex items-center px-3 py-2 text-sm font-semibold text-center text-white bg-warning-500 rounded-lg hover:bg-warning-600 focus:ring-4 focus:outline-none focus:ring-warning-600 dark:bg-warning-400 dark:hover:bg-warning-500 dark:focus:ring-warning-300"
+												>
+													Agregar
+													<svg
+														class="rtl:rotate-180 w-5 h-5 ms-2"
+														aria-hidden="true"
+														xmlns="http://www.w3.org/2000/svg"
+														fill="none"
+														viewBox="0 0 14 10"
+													>
+														<svg
+															class="w-6 h-6"
+															aria-hidden="true"
+															xmlns="http://www.w3.org/2000/svg"
+															fill="none"
+															viewBox="0 0 20 18"
+														>
+															<path
+																stroke="currentColor"
+																stroke-linecap="round"
+																stroke-linejoin="round"
+																stroke-width="2"
+																d="M10 12.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
+															></path>
+															<path
+																stroke="currentColor"
+																stroke-linecap="round"
+																stroke-linejoin="round"
+																stroke-width="2"
+																d="M17 3h-2l-.447-.894A2 2 0 0 0 12.764 1H7.236a2 2 0 0 0-1.789 1.106L5 3H3a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V5a2 2 0 0 0-2-2Z"
+															>
+															</path>
+														</svg>
+													</svg>
+												</a>
+											</div>
+										</div>
+									</div>
+									<div class="col-span-12 sm:col-span-8">
+										<div class="grid grid-cols-12 gap-4">
+											<div
+												class="col-span-12 sm:col-span-12 md:col-span-8 lg:col-span-6"
+											>
+												<label
+													for="quotationProductName"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Nombre</label
+												>
+												<input
+													type="text"
+													name="quotationProductName"
+													id="quotationProductName"
+													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+													placeholder="Nombre del Producto"
+													required=""
+												/>
+											</div>
+											<div
+												class="col-span-12 md:col-span-4 lg:col-span-6"
+											>
+												<label
+													for="quotationType"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Tipo de Cotización</label
+												>
+												<select
+													id="quotationType"
+													name="quotationType"
+													class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 select2"
+												>
+													<option
+														value="0"
+														selected=""
+														>-- Seleccionar Tipo de
+														Cotización --</option
+													>
+
+													<option value="1">
+														Nacional
+													</option>
+													<option value="2">
+														Internacional
+													</option>
+													<option value="3"
+														>Personal</option
+													>
+												</select>
+											</div>
+											<!-- Internacional -->
+											<div
+												class="col-span-12 md:col-span-6 lg:col-span-6"
+											>
+												<label
+													for="quotationLink"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Enlace</label
+												>
+												<input
+													type="text"
+													name="quotationLink"
+													id="quotationLink"
+													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+													placeholder="Enlace del Producto"
+													required=""
+												/>
+											</div>
+											<div
+												class="col-span-12 md:col-span-6 lg:col-span-4"
+											>
+												<label
+													for="quotationStore"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Tienda</label
+												>
+												<select
+													id="quotationStore"
+													name="quotationStore"
+													class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 select2"
+												>
+													<option
+														value="0"
+														selected=""
+														>-- Seleccionar Tienda
+														--</option
+													>
+
+													<option value="1">
+														Indiferente
+													</option>
+													<option value="2"
+														>Amazon</option
+													>
+												</select>
+											</div>
+											<div
+												class="col-span-12 md:col-span-6 lg:col-span-4"
+											>
+												<label
+													for="quotationCountry"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>País Origen</label
+												>
+												<select
+													id="quotationCountry"
+													name="quotationCountry"
+													class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 select2"
+												>
+													<option
+														value="0"
+														selected=""
+														>-- Seleccionar País --</option
+													>
+
+													<option value="1">
+														Indiferente
+													</option>
+													<option value="2"
+														>China</option
+													>
+												</select>
+											</div>
+											<div
+												class="col-span-12 md:col-span-6 lg:col-span-4"
+											>
+												<label
+													for="quotationDeliveryDate"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Fecha de entrega</label
+												>
+												<input
+													type="date"
+													name="quotationDeliveryDate"
+													id="quotationDeliveryDate"
+													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+													placeholder="Fecha de Entrega"
+												/>
+											</div>
+											<div
+												class="col-span-12 md:col-span-3 lg:col-span-3"
+											>
+												<label
+													for="quotationPrice"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Precio</label
+												>
+												<input
+													type="number"
+													name="quotationPrice"
+													id="quotationPrice"
+													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+													min="0"
+													step="0.01"
+												/>
+											</div>
+											<div
+												class="col-span-12 sm:col-span-4 md:col-span-3 lg:col-span-3"
+											>
+												<label
+													for="quotationShipping"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Envío</label
+												>
+												<input
+													type="number"
+													name="quotationShipping"
+													id="quotationShipping"
+													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+													min="0"
+													step="0.01"
+												/>
+											</div>
+											<div
+												class="col-span-12 sm:col-span-4 md:col-span-3 lg:col-span-3"
+											>
+												<label
+													for="quotationWeight"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Peso</label
+												>
+												<input
+													type="number"
+													name="quotationWeight"
+													id="quotationWeight"
+													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+													min="0"
+													step="0.01"
+												/>
+											</div>
+											<!-- /Internacional -->
+											<div
+												class="col-span-12 sm:col-span-4 md:col-span-3 lg:col-span-3"
+											>
+												<label
+													for="quotationQuantity"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Cantidad</label
+												>
+												<input
+													type="number"
+													name="quotationQuantity"
+													id="quotationQuantity"
+													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+													min="0"
+													step="1"
+												/>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section><div>
+					<button
+						type="submit"
+						class="inline-flex justify-center rounded-md border border-transparent bg-secondary-400 py-2 px-4 text-sm font-medium text-gray-100 shadow-sm hover:bg-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2"
+					>
+						Crear Cotización
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</BaseLayout>

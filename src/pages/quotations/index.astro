@@ -1,0 +1,196 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "../../layouts/app.astro";
+import {
+	db,
+	eq,
+	Quotations,
+	Quotations_Details,
+	Products,
+	Images,
+	Product_Relations,
+} from "astro:db";
+
+const quotations = await db
+	.select({
+		id: Quotations.id,
+		number: Quotations.number,
+		product: {
+			id: Products.id,
+			name: Products.name,
+		},
+		price: Quotations_Details.price,
+		created_at: Quotations.created_at,
+		updated_at: Quotations.updated_at,
+		processed: Quotations.processed,
+		image: {
+			url: Images.image_url,
+			name: Images.name,
+			thumbnail: Images.image_thumbnail,
+		},
+	})
+	.from(Quotations)
+	.leftJoin(
+		Quotations_Details,
+		eq(Quotations.id, Quotations_Details.quotation_id),
+	)
+	.leftJoin(Products, eq(Quotations_Details.product_id, Products.id))
+	.leftJoin(Product_Relations, eq(Products.id, Product_Relations.product_id))
+	.leftJoin(Images, eq(Product_Relations.image_id, Images.id));
+---
+
+<BaseLayout title="Cotizaciones">
+	<div class="mx-auto">
+		<div class="sm:flex sm:items-center">
+			<div class="sm:flex-auto">
+				<h1
+					class="text-2xl font-semibold text-gray-900 dark:text-white"
+				>
+					Cotizaciones
+				</h1>
+			</div>
+			<div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+				<a
+					href="/quotations/create"
+					class="inline-flex items-center justify-center rounded-md border border-transparent
+                    bg-primary-400 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-500"
+				>
+					Agregar Cotización
+				</a>
+			</div>
+			<div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
+				<a
+					href="/quotations/create_fast"
+					class="inline-flex items-center justify-center rounded-md border border-transparent
+                    bg-secondary-400 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-secondary-500"
+				>
+					Cotización Rápida
+				</a>
+			</div>
+		</div>
+		<div class="mt-8 flex flex-col">
+			<div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+				<div
+					class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8"
+				>
+					<div
+						class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg"
+					>
+						<table class="min-w-full divide-y divide-gray-300">
+							<thead
+								class="bg-gray-900 text-white text-sm font-semibold text-center divide-y divide-gray-300"
+							>
+								<tr>
+									<th scope="col" class="py-3.5 pl-4 pr-3">
+										<span class="material-symbols-outlined">
+											imagesmode
+										</span>
+									</th>
+									<th scope="col" class="px-3 py-3.5"
+										>Número</th
+									>
+									<th scope="col" class="py-3.5 pl-4 pr-3"
+										>Producto</th
+									>
+									<th scope="col" class="px-3 py-3.5"
+										>Precio</th
+									>
+									<th scope="col" class="px-3 py-3.5">Tipo</th
+									>
+									<th
+										scope="col"
+										class="relative py-3.5 pl-3 pr-4 sm:pr-6"
+									>
+										<span class="sr-only">Actions</span>
+									</th>
+								</tr>
+							</thead>
+							<tbody
+								class="divide-y divide-gray-200 bg-gray-200 dark:text-gray-300 dark:bg-gray-800"
+							>
+								{
+									quotations.length > 0 ? (
+										quotations.map((quotation) => (
+											<tr>
+												<td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium">
+													<div class="flex items-center">
+														<div class="flex-shrink-0 h-10 w-10">
+															<img
+																class="h-10 w-10 rounded-full"
+																src={
+																	quotation.image
+																		? `/uploads/${quotation.image.url}`
+																		: "/img/photo_not_available.png"
+																}
+																alt={
+																	quotation.image
+																		? quotation
+																				.image
+																				.name
+																		: "asset photo"
+																}
+															/>
+														</div>
+														<div class="ml-4">
+															<div class="text-sm font-medium text-gray-900">
+																Sin Imagen
+															</div>
+															<div class="text-sm text-gray-500">
+																Sin Imagen
+															</div>
+														</div>
+													</div>
+												</td>
+												<td class="whitespace-nowrap px-3 py-4 text-sm">
+													{quotation.number}
+												</td>
+												<td class="whitespace-nowrap px-3 py-4 text-sm">
+													<a
+														href={`/products/${quotation.product.id}`}
+														class="text-info-500 hover:text-info-600"
+													>
+														{quotation.product.name}
+													</a>
+												</td>
+												<td class="whitespace-nowrap px-3 py-4 text-sm">
+													${" "}
+													{quotation.price
+														? quotation.price
+														: "0.00"}
+												</td>
+												<td class="whitespace-nowrap px-3 py-4 text-sm">
+													'Sin Tipo'
+												</td>
+												<td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+													<a
+														href={`/quotations/${quotation.id}/edit`}
+														class="text-secondary-500 hover:text-secondary-600 mr-4"
+													>
+														Edit
+													</a>
+													<a
+														href={`/quotations/${quotation.id}`}
+														class="text-success-500 hover:text-success-600"
+													>
+														View
+													</a>
+												</td>
+											</tr>
+										))
+									) : (
+										<td
+											colspan="6"
+											class="px-3 py-4 text-center"
+										>
+											No se encontraron registros
+										</td>
+									)
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div></BaseLayout
+>
