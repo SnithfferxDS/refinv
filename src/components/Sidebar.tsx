@@ -2,11 +2,17 @@ import { useAuthStore } from '../store/authStore';
 import { APP_NAME, APP_VERSION } from '../configs/constants';
 
 const menuItems = [
-    { icon: "grid_view", label: "Overview", url: "/dashboard" },
-    { icon: "swap_horiz", label: "Transactions", url: "/dashboard" },
-    { icon: "assessment", label: "Reports", url: "/dashboard" },
-    { icon: "settings", label: "Settings", url: "/dashboard" },
-    { icon: "", label: "Productos", url: "/products/list" },
+    { icon: "grid_view", label: "Dashboard", url: "/dashboard" },
+    { icon: "list", label: "Cotizaciones", url: "/quotations" },
+    { icon: "package_2", label: "Productos", url: "/products" },
+    { icon: "beenhere", label: "Marcas", url: "/brands" },
+    { icon: "receipt_long", label: "Compras", url: "/purchases" },
+    { icon: "receipt_long", label: "Ventas", url: "/sales" },
+    { icon: "receipt_long", label: "Facturas", url: "/invoices" },
+    { icon: "order_approve", label: "Pedidos", url: "/orders" },
+    { icon: "swap_horiz", label: "Movimientos", url: "/movements" },
+    { icon: "assessment", label: "Reportes", url: "/reports" },
+    { icon: "settings", label: "Settings", url: "/settings" },
 ];
 export default function Sidebar() {
     const logout = useAuthStore((state) => state.logout);
@@ -24,7 +30,7 @@ export default function Sidebar() {
 	        hidden 
 	        w-64 
 	        h-full 
-	        pt-16 
+	        pt-4 
 	        font-normal 
             duration-75 
 	        md:flex lg:flex 
@@ -35,7 +41,7 @@ export default function Sidebar() {
                 <a href="/" className="flex ml-2 md:mr-24">
                     <img src="/img/logo.png" alt="SIPI logo" className="w-16 h-16 mr-2" />
                     <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap">
-                        SIPI v2.0
+                        SIPI v3.0
                     </span>
                 </a>
             </div>

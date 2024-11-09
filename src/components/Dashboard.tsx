@@ -21,7 +21,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 export default function Dashboard() {
     return (
         <>
-            <div className="flex justify-between items-center mb-8">
+            <div className="flex justify-between items-center mb-8 text-gray-800 dark:text-gray-100">
                 <h1 className="text-2xl font-bold">Dashboard</h1>
                 <div className="relative">
                     <input
