@@ -38,6 +38,8 @@ const Categories = defineTable({
         relations: column.number({ references: () => Category_Relations.columns.id, default: 1 }),
         logo: column.text({ optional: true }),
         main: column.boolean({ default: false }),
+        dai: column.number({ default: 0.0 }),
+        permission: column.boolean({ default: false }),
         created_at: column.date({ default: NOW }),
         updated_at: column.date({ optional: true }),
         deleted_at: column.date({ optional: true })
@@ -84,14 +86,14 @@ const Quotations = defineTable({
         id: column.number({ primaryKey: true }),
         number: column.text({ unique: true }),
         quotation_date: column.date(),
-        process_date: column.date(),
-        paid_date: column.date(),
+        process_date: column.date({ optional: true }),
+        paid_date: column.date({ optional: true }),
         total: column.number({ default: 0.0 }),
         taxes: column.number({ default: 0.0 }),
         discount: column.number({ default: 0.0 }),
-        quotation_details: column.number(),
-        seller_id: column.number(),
-        buyer_id: column.number(),
+        quotation_details: column.number({ optional: true }),
+        seller_id: column.number({ optional: true }),
+        buyer_id: column.number({ optional: true }),
         processed: column.boolean({ default: false }),
         created_at: column.date({ default: NOW }),
         updated_at: column.date({ optional: true })
@@ -105,9 +107,34 @@ const Quotations_Details = defineTable({
         product_id: column.number({ references: () => Products.columns.id }),
         quantity: column.number({ default: 1 }),
         price: column.number({ default: 0.0 }),
+        shipping: column.number({ default: 0.0 }),
         taxes: column.number({ default: 0.0 }),
         discount: column.number({ default: 0.0 }),
+        store_id: column.number({ references: () => Stores.columns.id }),
+        country_id: column.number({ references: () => Countries.columns.id }),
+        store_link: column.number({ optional: true }),
+        quot_type: column.number({ default: 1 }),
         processed: column.boolean({ default: false }),
+        created_at: column.date({ default: NOW }),
+        updated_at: column.date({ optional: true })
+    }
+});
+
+const Stores = defineTable({
+    columns: {
+        id: column.number({ primaryKey: true }),
+        name: column.text({ unique: true }),
+        taxes: column.number({ default: 0.0 }),
+        created_at: column.date({ default: NOW }),
+        updated_at: column.date({ optional: true })
+    }
+});
+
+const Countries = defineTable({
+    columns: {
+        id: column.number({ primaryKey: true }),
+        name: column.text({ unique: true }),
+        tlc: column.number({ default: 0.0 }),
         created_at: column.date({ default: NOW }),
         updated_at: column.date({ optional: true })
     }
@@ -337,6 +364,8 @@ export default defineDb({
         // Sales_Details,
         // Users,
         // Sellers,
-        Images
+        Images,
+        Stores,
+        Countries,
     },
 });

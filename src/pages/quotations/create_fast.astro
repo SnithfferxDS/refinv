@@ -1,20 +1,22 @@
 ---
 import BaseLayout from "../../layouts/app.astro";
-import { saveData } from "../api/quotations/create";
+import { saveFastData } from "../api/quotations/create";
 
 if (Astro.request.method === "POST") {
 	const formData = await Astro.request.formData();
 	let data = {
-		product: formData.get("quotationProductName"),
-		type: formData.get("quotationType"),
-		link: formData.get("quotationLink"),
-		store: formData.get("quotationStore"),
-		country: formData.get("quotationCountry"),
-		date: formData.get("quotationDeliveryDate"),
-		price: formData.get("quotationPrice"),
-		shipping: formData.get("quotationShipping"),
-		weight: formData.get("quotationWeight"),
-		quantity: formData.get("quotationQuantity"),
+		product: formData.get("quotationProductName")?.toString(),
+		type: formData.get("quotationType")?.toString(),
+		link: formData.get("quotationLink")?.toString(),
+		store: formData.get("quotationStore")?.toString() ?? "1",
+		country: formData.get("quotationCountry")?.toString() ?? "1",
+		date: formData.get("quotationDeliveryDate")?.toString(),
+		price: formData.get("quotationPrice")?.toString(),
+		shipping: formData.get("quotationShipping")?.toString(),
+		weight: formData.get("quotationWeight")?.toString(),
+		quantity: formData.get("quotationQuantity")?.toString(),
+		measure_unit: formData.get("quotationMeasureUnit")?.toString(),
+		discount: formData.get("quotationMeasureUnit")?.toString(),
 	};
 	const result = await saveFastData(data);
 	return Astro.redirect(`/products/${result.id}/edit`);
