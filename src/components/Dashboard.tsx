@@ -32,7 +32,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div className="grid grid-cols-4 gap-4 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 mb-8">
                 {[
                     { label: 'Current MRR', value: '$12.4k', bg: 'bg-primary-500' },
                     { label: 'Current Customers', value: '16,601', bg: 'bg-yellow-500' },
@@ -46,7 +46,7 @@ export default function Dashboard() {
                 ))}
             </div>
 
-            <div className="grid grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="bg-white p-6 rounded-lg shadow">
                     <h2 className="text-xl font-semibold mb-4">Trend</h2>
                     <ResponsiveContainer width="100%" height={300}>
