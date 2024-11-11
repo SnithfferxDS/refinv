@@ -3,6 +3,7 @@ import Layout from "./main.astro";
 import Sidebar from "../components/Sidebar";
 import AuthGuard from "../components/AuthGuard";
 import Footer from "../templates/footer.app.astro";
+import Navbar from "../templates/Navbar.App.Template.astro";
 
 interface Props {
 	title: string;
@@ -13,7 +14,9 @@ const { title } = Astro.props;
 
 <Layout title={title}>
 	<Sidebar client:load />
-	<div class="flex pt-8 overflow-hidden bg-gray-50 dark:bg-gray-700">
+	<!-- NAVBAR -->
+	<Navbar />
+	<div class="flex pt-16 overflow-hidden bg-gray-50 dark:bg-gray-700">
 		<div
 			id="main-content"
 			class="relative

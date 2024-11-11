@@ -1,26 +1,56 @@
 ---
-import Layout from './Main.Layout.astro'
-import Navbar from '../templates/Navbar.App.Template.astro';
-import Footer from '../templates/Footer.App.Template.astro';
-import Sidebar from '../templates/Sidebar.Template.astro';
+import Layout from "./Main.Layout.astro";
+import Navbar from "../templates/Navbar.App.Template.astro";
+import Footer from "../templates/Footer.App.Template.astro";
+import Sidebar from "../templates/Sidebar.Template.astro";
 
 interface Props {
     title: string;
 }
 const { title } = Astro.props;
 ---
+
 <Layout title={title}>
-    <!-- SIDEBAR -->
-     <Sidebar />
     <!-- NAVBAR -->
-     <Navbar />
-     <div
-        class="flex pt-16 overflow-hidden text-gray-800 bg-gray-50 dark:text-white dark:bg-gray-800">
-        <div id="main-content" class="relative w-full h-full min-h-screen max-w-screen-2xl mx-auto overflow-y-auto rounded-md m-3 lg:ml-[15.5rem] bg-gray-300 dark:bg-gray-800/80 shadow-md">
+    <Navbar />
+    <!-- SIDEBAR -->
+    <Sidebar client:load />
+    <div
+        class="flex
+        pt-16
+        overflow-hidden
+        text-gray-800
+        bg-gray-50
+        dark:text-white
+        dark:bg-gray-800"
+    >
+        <div
+            id="main-content"
+            class="relative
+            w-full
+            h-full
+            overflow-y-auto
+            min-h-screen
+            max-w-screen-2xl
+            mx-auto
+            rounded-md
+            m-3
+            shadow-md
+            lg:ml-64
+            bg-gray-300
+            dark:bg-gray-900"
+        >
             <!-- BREADCRUMBS -->
-            <slot />
+            <div class="px-4 py-2 rounded-md">
+                <slot />
+            </div>
             <!-- FOOTER -->
             <Footer />
         </div>
     </div>
 </Layout>
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+    rel="stylesheet"
+/>

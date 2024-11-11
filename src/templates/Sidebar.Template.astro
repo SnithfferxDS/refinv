@@ -1,82 +1,362 @@
+---
+/* import { useAuthStore } from "../store/authStore";
+const logout = useAuthStore((state) => state.logout);
+const user = useAuthStore((state) => state.user); */
+const menuItems = [
+    { icon: "grid_view", label: "Dashboard", url: "/dashboard", submenu: [] },
+    {
+        icon: "list",
+        label: "Cotizaciones",
+        submenu: [
+            { title: "Lista", url: "/quotations" },
+            { title: "Cotización rápida", url: "/quotations/create_fast" },
+        ],
+    },
+    {
+        icon: "order_approve",
+        label: "Pedidos",
+        submenu: [
+            { title: "Lista", url: "/orders" },
+            { title: "Lista", url: "/orders/tracking" },
+        ],
+    },
+    {
+        icon: "package_2",
+        label: "Productos",
+        url: "/products",
+        submenu: [],
+    },
+    {
+        icon: "beenhere",
+        label: "Marcas",
+        url: "/brands",
+        submenu: [],
+    },
+    { icon: "receipt_long", label: "Compras", url: "/purchases", submenu: [] },
+    { icon: "receipt_long", label: "Ventas", url: "/sales", submenu: [] },
+    { icon: "receipt_long", label: "Facturas", url: "/invoices", submenu: [] },
+    {
+        icon: "swap_horiz",
+        label: "Movimientos",
+        url: "/movements",
+        submenu: [],
+    },
+    {
+        icon: "",
+        label: "Reportes",
+        submenu: [
+            { title: "Lista", url: "/quotations/reports" },
+            { title: "Lista", url: "/orders/reports" },
+            { title: "Reportes", url: "/products/reports" },
+            { title: "Lista", url: "/brands/reports" },
+        ],
+    },
+    { icon: "settings", label: "Settings", url: "/settings", submenu: [] },
+];
+---
+
 <aside
     id="sidebar"
-    class="fixed top-0 left-0 z-20 flex-col flex-shrink-0 hidden w-60 h-full font-normal duration-75 lg:flex drop-shadow-md transition-width shadow-md pt-16"
-    aria-label="Sidebar">
+    class="fixed
+    top-0
+    left-0
+    z-20
+    flex-col
+    flex-shrink-0
+    hidden
+    w-64
+    h-full
+    font-normal
+    duration-75
+    lg:flex
+    drop-shadow-md
+    transition-width
+    shadow-md
+    pt-16"
+    aria-label="Sidebar"
+>
     <div
-        class="relative flex flex-col flex-1 min-h-0 pt-0 border-r text-white bg-secondary-500/75 border-secondary-400/75 dark:bg-secondary-600/75 dark:border-secondary-500/75">
+        class="relative
+        flex
+        flex-col
+        flex-1
+        min-h-0
+        pt-0
+        border-r
+        text-white
+        bg-secondary-400
+        border-secondary-500
+        dark:bg-secondary-300
+        dark:border-secondary-400"
+    >
         <div
-            class="flex flex-col flex-1 pt-5 pb-28 overflow-y-auto scrollbar scrollbar-w-2 scrollbar-thumb-rounded-[0.1667rem] scrollbar-thumb-slate-200 scrollbar-track-gray-400 dark:scrollbar-thumb-slate-900 dark:scrollbar-track-gray-800 ">
-            <div
-                class="flex-1 px-3 space-y-1 divide-y">
+            class:list={[
+                "flex flex-col flex-1 pt-5 pb-28 overflow-y-auto",
+                "scrollbar scrollbar-w-2 scrollbar-thumb-rounded-[0.1667rem]",
+                "scrollbar-thumb-slate-200 scrollbar-track-gray-400",
+                "dark:scrollbar-thumb-slate-900 dark:scrollbar-track-gray-800",
+            ]}
+        >
+            <div class="flex-1 px-3 space-y-1 divide-y">
                 <ul class="pb-2 space-y-2">
                     <li>
                         <form action="/search" method="GET" class="lg:hidden">
-                            <label for="mobile-search" class="sr-only">Search</label>
+                            <label for="mobile-search" class="sr-only"
+                                >Search</label
+                            >
                             <div class="relative">
-                                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                    <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path fill-rule="evenodd"
+                                <div
+                                    class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+                                >
+                                    <svg
+                                        class="w-5 h-5 text-gray-100"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
                                             d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                                             clip-rule="evenodd"></path>
                                     </svg>
                                 </div>
-                                <input type="text" name="mobile-search" id="mobile-search"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-200 dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                    placeholder="Search.." />
+                                <input
+                                    type="text"
+                                    name="mobile-search"
+                                    id="mobile-search"
+                                    class="border
+                                    text-sm
+                                    rounded-lg
+                                    block
+                                    w-full
+                                    pl-10
+                                    p-2.5
+                                    bg-secondary-400
+                                    border-secondary-500
+                                    text-gray-200
+                                    focus:ring-secondary-600
+                                    focus:border-secondary-600
+                                    dark:bg-secondary-300
+                                    dark:border-secondary-500
+                                    dark:placeholder-gray-200"
+                                    placeholder="Buscar.."
+                                />
                             </div>
                         </form>
                     </li>
                     <!-- Home -->
                     <li>
-                        <a href="/" class="flex items-center p-2 text-base rounded-lg group transition duration-75 focus:outline-offset-2 text-gray-200 hover:bg-gray-400 focus:outline-bluish-600 dark:hover:bg-gray-700 bg-secondary-500/50 border-secondary-400/50 dark:bg-secondary-600/50 dark:border-secondary-500/50">
-                            <svg fill="currentColor" class="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <path d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"></path>
-                                <path d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"></path>
+                        <a
+                            href="/"
+                            class="flex
+                            items-center
+                            p-2 text-base
+                            rounded-lg
+                            group transition duration-75 focus:outline-offset-2
+                            text-gray-200
+                            hover:bg-secondary-500
+                            focus:outline-secondary-600
+                            dark:hover:bg-secondary-400"
+                        >
+                            <svg
+                                fill="currentColor"
+                                class="w-6 h-6"
+                                viewBox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    d="M11.47 3.84a.75.75 0 011.06 0l8.69 8.69a.75.75 0 101.06-1.06l-8.689-8.69a2.25 2.25 0 00-3.182 0l-8.69 8.69a.75.75 0 001.061 1.06l8.69-8.69z"
+                                ></path>
+                                <path
+                                    d="M12 5.432l8.159 8.159c.03.03.06.058.091.086v6.198c0 1.035-.84 1.875-1.875 1.875H15a.75.75 0 01-.75-.75v-4.5a.75.75 0 00-.75-.75h-3a.75.75 0 00-.75.75V21a.75.75 0 01-.75.75H5.625a1.875 1.875 0 01-1.875-1.875v-6.198a2.29 2.29 0 00.091-.086L12 5.43z"
+                                ></path>
                             </svg>
                             <span class="ml-3" sidebar-toggle-item>Home</span>
                         </a>
                     </li>
                     <!-- Dashboard -->
                     <li>
-                        <a href="/dashboard" class="flex items-center p-2 text-base rounded-lg group transition duration-75 focus:outline-offset-2 text-gray-200 hover:bg-secondary-500/75 focus:outline-bluish-600 dark:text-gray-200 dark:hover:bg-secondary-600/75 border-secondary-500/50">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path>
-                                <path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path>
+                        <a
+                            href="/dashboard"
+                            class="flex items-center p-2 text-base rounded-lg group transition duration-75 focus:outline-offset-2
+                            text-gray-200
+                            hover:bg-secondary-500
+                            focus:outline-secondary-600
+                            dark:hover:bg-secondary-400"
+                        >
+                            <svg
+                                class="w-6 h-6"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"
+                                ></path>
+                                <path
+                                    d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"
+                                ></path>
                             </svg>
-                            <span class="ml-3" sidebar-toggle-item>Dashboard</span>
+                            <span class="ml-3" sidebar-toggle-item
+                                >Dashboard</span
+                            >
                         </a>
                     </li>
                     <!-- Categories -->
-                    <li>
-                        <a href="/categories" class="flex items-center p-2 text-base rounded-lg group transition duration-75 focus:outline-offset-2 text-gray-200 hover:bg-secondary-500/75 focus:outline-bluish-600 dark:text-gray-200 dark:hover:bg-secondary-600/75 border-secondary-500/50">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"></path>
-                            </svg>
-                            <span class="ml-3" sidebar-toggle-item>Categories</span>
-                        </a>
-                    </li>
-                    <!-- Brands -->
-                    <li>
-                        <a href="/brands" class="flex items-center p-2 text-base rounded-lg group transition duration-75 focus:outline-offset-2 text-gray-200 hover:bg-secondary-500/75 focus:outline-bluish-600 dark:text-gray-200 dark:hover:bg-secondary-600/75 border-secondary-500/50">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"></path>
-                            </svg>
-                            <span class="ml-3" sidebar-toggle-item>Brands</span>
-                        </a>
-                    </li>
-                    <!-- Suppliers -->
-                    <li>
-                        <a href="/suppliers" class="flex items-center p-2 text-base rounded-lg group transition duration-75 focus:outline-offset-2 text-gray-200 hover:bg-secondary-500/75 focus:outline-bluish-600 dark:text-gray-200 dark:hover:bg-secondary-600/75 border-secondary-500/50">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
-                                <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
-                            </svg>
-                            <span class="ml-3" sidebar-toggle-item>Suppliers</span>
-                        </a>
-                    </li>
+                    {
+                        menuItems.map((item, key) =>
+                            item.submenu.length > 0 ? (
+                                <li>
+                                    <button
+                                        id={key.toString()}
+                                        type="button"
+                                        class="flex items-center p-2 w-full text-base font-normal 
+                                        rounded-lg transition duration-75 group text-gray-200
+                                        hover:bg-secondary-500
+                                        focus:outline-secondary-600 
+                                        focus:bg-secondary-600/80 
+                                        dark:hover:bg-secondary-400"
+                                        aria-controls="dropdown-pages"
+                                        data-collapse-toggle="dropdown-pages"
+                                    >
+                                        <span class="material-symbols-outlined">
+                                            {item.icon}
+                                        </span>
+                                        <span class="flex-1 ml-3 text-left whitespace-nowrap">
+                                            {item.label}
+                                        </span>
+                                        <svg
+                                            aria-hidden="true"
+                                            class="w-6 h-6"
+                                            fill="currentColor"
+                                            viewBox="0 0 20 20"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path
+                                                fill-rule="evenodd"
+                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                clip-rule="evenodd"
+                                            />
+                                        </svg>
+                                    </button>
+                                    <ul
+                                        id="dropdown-pages"
+                                        class="hidden py-2 space-y-2"
+                                    >
+                                        {item.submenu.map(
+                                            (submenuItem, index) => (
+                                                <li>
+                                                    <a
+                                                        id={index.toString()}
+                                                        href={submenuItem.url}
+                                                        class="flex items-center p-2 pl-11 w-full 
+                                                        text-base font-normal rounded-lg transition 
+                                                        duration-75 group text-gray-100
+                                                        hover:bg-secondary-600
+                                                        focus:outline-secondary-700
+                                                        dark:hover:bg-secondary-500
+                            "
+                                                    >
+                                                        {submenuItem.title}
+                                                    </a>
+                                                </li>
+                                            ),
+                                        )}
+                                    </ul>
+                                </li>
+                            ) : (
+                                <li>
+                                    <a
+                                        id={key.toString()}
+                                        href={item.url}
+                                        class="
+                                                flex
+                                                items-center
+                                                p-2
+                                                text-base
+                                                font-normal
+                                                rounded-lg
+                                                text-gray-200
+                                                hover:bg-secondary-500
+                                                focus:outline-secondary-600
+                                                dark:hover:bg-secondary-400"
+                                    >
+                                        <span class="material-symbols-outlined">
+                                            {item.icon}
+                                        </span>
+                                        <span class="ml-3">{item.label}</span>
+                                    </a>
+                                </li>
+                            ),
+                        )
+                    }
                 </ul>
             </div>
         </div>
     </div>
 </aside>
+
+<div
+    class="fixed inset-0 z-10 hidden bg-gray-900/50 dark:bg-gray-900/90"
+    id="sidebarBackdrop"
+>
+</div>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+
+    if (sidebar) {
+        const toggleSidebarMobile = (
+            sidebar: HTMLElement,
+            sidebarBackdrop: HTMLElement,
+            toggleSidebarMobileHamburger: HTMLElement,
+            toggleSidebarMobileClose: HTMLElement,
+        ) => {
+            sidebar.classList.toggle("hidden");
+            sidebarBackdrop.classList.toggle("hidden");
+            toggleSidebarMobileHamburger.classList.toggle("hidden");
+            toggleSidebarMobileClose.classList.toggle("hidden");
+        };
+
+        const toggleSidebarMobileEl = document.getElementById(
+            "toggleSidebarMobile",
+        );
+        const sidebarBackdrop = document.getElementById("sidebarBackdrop")!;
+        const toggleSidebarMobileHamburger = document.getElementById(
+            "toggleSidebarMobileHamburger",
+        )!;
+        const toggleSidebarMobileClose = document.getElementById(
+            "toggleSidebarMobileClose",
+        )!;
+        const toggleSidebarMobileSearch = document.getElementById(
+            "toggleSidebarMobileSearch",
+        )!;
+
+        toggleSidebarMobileSearch?.addEventListener("click", () => {
+            toggleSidebarMobile(
+                sidebar,
+                sidebarBackdrop,
+                toggleSidebarMobileHamburger,
+                toggleSidebarMobileClose,
+            );
+        });
+
+        toggleSidebarMobileEl?.addEventListener("click", () => {
+            toggleSidebarMobile(
+                sidebar,
+                sidebarBackdrop,
+                toggleSidebarMobileHamburger,
+                toggleSidebarMobileClose,
+            );
+        });
+
+        sidebarBackdrop?.addEventListener("click", () => {
+            toggleSidebarMobile(
+                sidebar,
+                sidebarBackdrop,
+                toggleSidebarMobileHamburger,
+                toggleSidebarMobileClose,
+            );
+        });
+    }
+</script>

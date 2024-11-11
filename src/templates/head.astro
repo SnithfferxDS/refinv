@@ -17,7 +17,7 @@ const { title } = Astro.props;
 	<meta name="viewport" content="width=device-width" />
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<meta name="generator" content={Astro.generator} />
-	<title>{title} | {APP_NAME} v{APP_VERSION}</title>
+	<title>{title} | {APP_NAME} v {APP_VERSION}</title>
 	<script is:inline>
 		if (
 			localStorage.getItem("color-theme") === "dark" ||
