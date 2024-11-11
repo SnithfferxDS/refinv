@@ -40,6 +40,7 @@ const Categories = defineTable({
         main: column.boolean({ default: false }),
         dai: column.number({ default: 0.0 }),
         permission: column.boolean({ default: false }),
+        licence: column.number({ default: 0.00 }),
         created_at: column.date({ default: NOW }),
         updated_at: column.date({ optional: true }),
         deleted_at: column.date({ optional: true })
@@ -124,7 +125,16 @@ const Stores = defineTable({
     columns: {
         id: column.number({ primaryKey: true }),
         name: column.text({ unique: true }),
+        logo: column.text({ optional: true }),
+        address: column.text({ optional: true }),
+        website: column.text({ optional: true }),
+        phone: column.text({ optional: true }),
+        email: column.text({ optional: true }),
+        contact_name: column.text({ optional: true }),
+        contact_phone: column.text({ optional: true }),
+        contact_email: column.text({ optional: true }),
         taxes: column.number({ default: 0.0 }),
+        active: column.boolean({ default: true }),
         created_at: column.date({ default: NOW }),
         updated_at: column.date({ optional: true })
     }
@@ -134,7 +144,9 @@ const Countries = defineTable({
     columns: {
         id: column.number({ primaryKey: true }),
         name: column.text({ unique: true }),
-        tlc: column.number({ default: 0.0 }),
+        tax: column.number({ default: 0.00 }),
+        tlc: column.number({ default: 0.00 }),
+        impex: column.number({ default: 0.00 }),
         created_at: column.date({ default: NOW }),
         updated_at: column.date({ optional: true })
     }
