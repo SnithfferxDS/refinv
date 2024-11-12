@@ -1,22 +1,60 @@
 ---
 import BaseLayout from "../../layouts/app.astro";
 import { saveFastData } from "../api/quotations/create";
+import type { FastQuotation } from "../../types/Quotation";
+import { generateIdentifier } from "../../utils/functions";
 
 if (Astro.request.method === "POST") {
 	const formData = await Astro.request.formData();
-	let data = {
-		product: formData.get("quotationProductName")?.toString(),
-		type: formData.get("quotationType")?.toString(),
-		link: formData.get("quotationLink")?.toString(),
-		store: formData.get("quotationStore")?.toString() ?? "1",
-		country: formData.get("quotationCountry")?.toString() ?? "1",
-		date: formData.get("quotationDeliveryDate")?.toString(),
-		price: formData.get("quotationPrice")?.toString(),
-		shipping: formData.get("quotationShipping")?.toString(),
-		weight: formData.get("quotationWeight")?.toString(),
-		quantity: formData.get("quotationQuantity")?.toString(),
-		measure_unit: formData.get("quotationMeasureUnit")?.toString(),
-		discount: formData.get("quotationMeasureUnit")?.toString(),
+	let productInput = formData.get("quotationProductName")?.toString(),
+		quotNumber =
+			formData.get("quotationNumber")?.toString() ??
+			generateIdentifier("quotation"),
+		product_id = formData.get("product_id")?.toString(),
+		category = formData.get("quotationProductType")?.toString(),
+		quotationType = formData.get("quotationType")?.toString() ?? "1",
+		country = formData.get("quotationCountry")?.toString(),
+		store = formData.get("quotationStore")?.toString(),
+		price = formData.get("quotationPrice")?.toString(),
+		storeLink = formData.get("quotationLink")?.toString(),
+		shipping = formData.get("quotationShipping")?.toString(),
+		weight = formData.get("quotationWeight")?.toString(),
+		quantity = formData.get("quotationQuantity")?.toString(),
+		measure_unit = formData.get("quotationMeasureUnit")?.toString(),
+		height = formData.get("quotationHeight")?.toString(),
+		width = formData.get("quotationWidth")?.toString(),
+		length = formData.get("quotationLength")?.toString(),
+		delivery = formData.get("quotationDeliveryDate")?.toString();
+	if (!productInput)
+		return new Response("El producto es requerida", { status: 400 });
+	if (!price) return new Response("El precio es requerido", { status: 400 });
+	if (quotationType !== undefined && quotationType === "2") {
+		if (!category)
+			return new Response("La categoría es requerida", { status: 400 });
+		if (!store)
+			return new Response("La tienda es requerida", { status: 400 });
+		if (!country)
+			return new Response("El país es requerida", { status: 400 });
+	}
+	let data: FastQuotation = {
+		product: product_id ? parseInt(product_id) : productInput,
+		category_id: category ? parseInt(category) : 0,
+		link: storeLink ?? "",
+		store_id: store ? parseInt(store) : 0,
+		country_id: country ? parseInt(country) : 0,
+		quotation_date: delivery ? new Date(delivery) : new Date(),
+		price: parseFloat(price),
+		shipping: shipping ? parseFloat(shipping) : 0,
+		weight: weight ? parseFloat(weight) : 0,
+		quantity: quantity ? parseInt(quantity) : 0,
+		measure_unit: measure_unit ?? "gr",
+		height: height ? parseFloat(height) : 0,
+		width: width ? parseFloat(width) : 0,
+		length: length ? parseFloat(length) : 0,
+		number: quotNumber,
+		weight_unit: formData.get("quotationWeightUnit")?.toString(),
+		images: formData.get("quotationImages")?.toString().split(",") ?? [""],
+		importType: parseInt(quotationType),
 	};
 	const result = await saveFastData(data);
 	return Astro.redirect(`/products/${result.id}/edit`);
