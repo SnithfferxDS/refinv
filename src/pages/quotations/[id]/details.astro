@@ -1,0 +1,39 @@
+---
+import { db, eq } from "astro:db";
+import Layout from "../../../layouts/App.Layout.astro";
+import { Quotation_Details, Quotations } from "astro:db";
+
+const { id } = Astro.params;
+const quotatedProduct = await db
+	.select({
+		id: Quotations.id,
+		number: Quotations.number,
+		quotation_date: Quotations.quotation_date,
+		process_date: Quotations.process_date,
+		paid_date: Quotations.paid_date,
+		total: Quotations.total,
+		taxes: Quotations.taxes,
+	})
+	.from(Quotations)
+	.where(eq(Quotations.id, id))
+	.leftJoin(
+		Quotation_Details,
+		eq(Quotation_Details.quotation_id, Quotations.id),
+	)
+	.get();
+if (!quotatedProduct) {
+	return Astro.redirect(`/quotations`);
+}
+---
+
+<Layout title={`${id} | Details | Quotation`}>
+    <div class="mx-auto">
+        <div class="sm:flex sm:items-center">
+            <div class="sm:flex-auto">
+                <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">
+                    Cotización # {quotatedProduct.number}
+                </h1>
+            </div>
+        </div>
+    </div>
+</Layout>
