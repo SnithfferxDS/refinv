@@ -9,26 +9,54 @@ import {
 } from "astro:db";
 import type { NormalQuotation, FastQuotation, Quotation, Quotation_Detail, Quotation_Details } from "../types/Quotation";
 
-export function generateIdentifier(typo: string) {
-    let hoy = new Date();
-    let random = Math.floor(Math.random() * 1000);
-    let additional = Math.floor(Math.random() * 10);
-    let identifier = "";
+export async function generateIdentifier(typo: string) {
+    let date = new Date(),
+        hoy = date.toLocaleString("es-SV"),
+        dia = date.getDate().toString(),
+        mes = date.getMonth() + 1,
+        anio = date.getFullYear(),
+        random = Math.floor(Math.random() * 1000),
+        additional = Math.floor(Math.random() * 10),
+        hora = date.getHours().toString(),
+        minutos = date.getMinutes().toString(),
+        segundos = date.getSeconds().toString(),
+        identifier = "";
     if (typo === "quotation") {
-        identifier = "Qt-" + hoy.getFullYear().toString() + hoy.getMonth().toString() + hoy.getDate().toString() + "-" + random.toString() + additional.toString();
+        identifier = "Qt-" + anio + mes + dia + "-" + hora + minutos + segundos + "-" + random.toString() + additional.toString();
+        const quotation = await db.select().from(Quotations).where(eq(Quotations.number, identifier));
+        if (quotation.length > 0) {
+            return generateIdentifier(typo);
+        }
     } else if (typo === "invoice") {
-        identifier = "Inv-" + hoy.getFullYear().toString() + hoy.getMonth().toString() + hoy.getDate().toString() + random.toString() + additional.toString();
+        identifier = "Inv-" + anio + mes + dia + hora + minutos + segundos + "-" + random.toString() + additional.toString();
+        const quotation = await db.select().from(Quotations).where(eq(Quotations.number, identifier));
+        if (quotation.length > 0) {
+            return generateIdentifier(typo);
+        }
     } else if (typo === "upc") {
-        identifier = hoy.getFullYear().toString() + hoy.getMonth().toString() + hoy.getDate().toString() + hoy.getHours().toString() + random.toString() + additional.toString();
+        identifier = anio + mes + dia + hora + minutos + segundos + random.toString() + additional.toString();
+        const product = await db.select().from(Products).where(eq(Products.upc, identifier));
+        if (product.length > 0) {
+            return generateIdentifier(typo);
+        }
     } else if (typo === "sku") {
-        identifier = "DS-" + hoy.getMonth().toString() + hoy.getDate().toString() + random.toString() + "-" + additional.toString();
+        identifier = "DS-" + anio + mes + dia + random.toString() + "-" + additional.toString();
+        const product = await db.select().from(Products).where(eq(Products.sku, identifier));
+        if (product.length > 0) {
+            return generateIdentifier(typo);
+        }
     } else if (typo === "mpn") {
-        identifier = "DS-" + hoy.getFullYear().toString() + hoy.getMonth().toString() + hoy.getDate().toString() + random.toString() + additional.toString();
+        identifier = "DS-" + anio + mes + dia + "-" + hora + minutos + random.toString() + additional.toString();
+        const product = await db.select().from(Products).where(eq(Products.mpn, identifier));
+        if (product.length > 0) {
+            return generateIdentifier(typo);
+        }
     } else if (typo === "ean") {
-        identifier = "0" + hoy.getFullYear().toString() + hoy.getMonth().toString() + hoy.getDate().toString() + random.toString() + additional.toString();
-    }
-    if (recordExists(typo, identifier) !== undefined) {
-        generateIdentifier(typo);
+        identifier = "0" + anio + mes + dia + random.toString() + additional.toString();
+        const product = await db.select().from(Products).where(eq(Products.ean, identifier));
+        if (product.length > 0) {
+            return generateIdentifier(typo);
+        }
     }
     return identifier;
 }
@@ -63,7 +91,7 @@ export function calcWeight(width: number, height: number, length: number, measur
 async function recordExists(typo: string, id: string) {
     if (typo === "quotation") {
         const quotation = await db.select().from(Quotations).where(eq(Quotations.number, id));
-        return quotation !== undefined;
+        return quotation; // !== undefined ? quotation : undefined;
     } else if (typo === "invoice") {
         //const invoice = await db.select().from(db.table("Invoices")).where(eq(db.table("Invoices").number, id));
         return undefined; //invoice !== undefined;
@@ -321,8 +349,8 @@ export function calcDays(date_start: Date, date_end: Date, extra = 0) {
     days = (f1mf2 > 0) ? Math.abs(Math.ceil(f1mf2)) : 1;
     days = (days < 5) ? days + 15 : days + extra;
     return (days > 0)
-        ? { message: "El paquete se entregará en: ", days: days.toString() + "&nbsp;d&iacute;as" }
-        : { message: "Error en la fecha, fecha es negativa.", days: "Días para entrega: " + days.toString() };
+        ? { message: "El paquete se entregará en: ", days: days }
+        : { message: "Error en la fecha, fecha es negativa.", days: days };
 }
 
 export async function getTaxes(amount: number = 0, id: number, tipo: string) {
@@ -425,7 +453,7 @@ export async function calcImportFees(datos: NormalQuotation | FastQuotation) {
         if (datos.delivery !== undefined) delivery = new Date(datos.delivery);
         if (datos.currier !== undefined) currier = datos.currier;
     }
-    let tiempo_Envio = { message: '', days: '' };
+    let tiempo_Envio = { message: '', days: 0 };
     /*------------------ Verificación de datos -----------------*/
     if (price > 0) {
         if (warranty_period === 'years') {
@@ -455,10 +483,10 @@ export async function calcImportFees(datos: NormalQuotation | FastQuotation) {
                     case 'kb':
                         pounds = weightTotal * 0.002;
                         break;
-                    case 'Mb':
+                    case 'MB':
                         pounds = weightTotal * 0.002;
                         break;
-                    case 'Gb':
+                    case 'GB':
                         pounds = weightTotal * 0.002;
                         break;
                     default:
