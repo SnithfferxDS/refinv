@@ -1,15 +1,24 @@
 ---
-import BaseLayout from "../../layouts/app.astro";
+import BaseLayout from "../../layouts/App.Layout.astro";
 import { saveFastData } from "../api/quotations/create";
 import type { FastQuotation } from "../../types/Quotation";
 import { generateIdentifier } from "../../utils/functions";
+import { db } from "astro:db";
+import { Categories, Stores, Countries } from "astro:db";
+import StoresIsland from "../../components/Quotations/Stores";
+
+interface Props {
+	quotNum: string;
+}
+
+const { quotNum = generateIdentifier("quotation") } = Astro.props;
+
+let errorMessage = "";
 
 if (Astro.request.method === "POST") {
 	const formData = await Astro.request.formData();
 	let productInput = formData.get("quotationProductName")?.toString(),
-		quotNumber =
-			formData.get("quotationNumber")?.toString() ??
-			generateIdentifier("quotation"),
+		quotNumber = quotNum,
 		product_id = formData.get("product_id")?.toString(),
 		category = formData.get("quotationProductType")?.toString(),
 		quotationType = formData.get("quotationType")?.toString() ?? "1",
@@ -21,13 +30,14 @@ if (Astro.request.method === "POST") {
 		weight = formData.get("quotationWeight")?.toString(),
 		quantity = formData.get("quotationQuantity")?.toString(),
 		measure_unit = formData.get("quotationMeasureUnit")?.toString(),
-		height = formData.get("quotationHeight")?.toString(),
-		width = formData.get("quotationWidth")?.toString(),
-		length = formData.get("quotationLength")?.toString(),
+		height = formData.get("quotationProductHeight")?.toString(),
+		width = formData.get("quotationProductWidth")?.toString(),
+		length = formData.get("quotationProductLength")?.toString(),
 		delivery = formData.get("quotationDeliveryDate")?.toString();
 	if (!productInput)
 		return new Response("El producto es requerida", { status: 400 });
-	if (!price) return new Response("El precio es requerido", { status: 400 });
+	if (!price && price !== "0")
+		return new Response("El precio es requerido", { status: 400 });
 	if (quotationType !== undefined && quotationType === "2") {
 		if (!category)
 			return new Response("La categoría es requerida", { status: 400 });
@@ -35,6 +45,11 @@ if (Astro.request.method === "POST") {
 			return new Response("La tienda es requerida", { status: 400 });
 		if (!country)
 			return new Response("El país es requerida", { status: 400 });
+	}
+	if (quotNumber === undefined || quotNumber === "") {
+		return new Response("El número de cotización es requerido", {
+			status: 400,
+		});
 	}
 	let data: FastQuotation = {
 		product: product_id ? parseInt(product_id) : productInput,
@@ -57,8 +72,38 @@ if (Astro.request.method === "POST") {
 		importType: parseInt(quotationType),
 	};
 	const result = await saveFastData(data);
-	return Astro.redirect(`/products/${result.id}/edit`);
+	if (result !== undefined) {
+		return Astro.redirect(`/quotations/${result.id}/edit`);
+	} else {
+		return new Response(result.message, { status: 400 });
+	}
 }
+
+const stores = await db
+	.select({ id: Stores.id, name: Stores.name })
+	.from(Stores);
+const countries = await db
+	.select({ id: Countries.id, name: Countries.name })
+	.from(Countries);
+const categories = await db
+	.select({ id: Categories.id, name: Categories.name })
+	.from(Categories);
+const weightUnits = [
+	{ value: "g", name: "g" },
+	{ value: "oz", name: "Oz" },
+	{ value: "lb", name: "lb" },
+	{ value: "kg", name: "kg" },
+	{ value: "kb", name: "kb" },
+	{ value: "MB", name: "MB" },
+	{ value: "GB", name: "GB" },
+];
+const measureUnits = [
+	{ value: "mm", name: "mm" },
+	{ value: "cm", name: "cm" },
+	{ value: "in", name: "in" },
+	{ value: "ft", name: "ft" },
+	{ value: "m", name: "m" },
+];
 ---
 
 <BaseLayout title="Quotations | create">
@@ -68,27 +113,21 @@ if (Astro.request.method === "POST") {
 				<h1
 					class="text-2xl font-semibold text-gray-900 dark:text-white"
 				>
-					Cotización Rápida
+					Cotización Rápida #<span class="font-semibold text-info-600"
+						>{quotNum}</span
+					>
 				</h1>
+				{
+					errorMessage && (
+						<div
+							class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+							role="alert"
+						>
+							<span class="block sm:inline">{errorMessage}</span>
+						</div>
+					)
+				}
 			</div>
-			<!-- <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-				<a
-					href="/quotations/create"
-					class="inline-flex items-center justify-center rounded-md border border-transparent
-                    bg-primary-400 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-primary-500"
-				>
-					Agregar Cotización
-				</a>
-			</div>
-			<div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-				<a
-					href="/quotations/create_fast"
-					class="inline-flex items-center justify-center rounded-md border border-transparent
-                    bg-secondary-400 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-secondary-500"
-				>
-					Cotización Rápida
-				</a>
-			</div> -->
 		</div>
 		<div class="mt-8 flex flex-col">
 			<form method="POST" class="space-y-6">
@@ -176,7 +215,13 @@ if (Astro.request.method === "POST") {
 													placeholder="Nombre del Producto"
 													required=""
 												/>
+												<input
+													type="hidden"
+													name="product_id"
+													id="product_id"
+												/>
 											</div>
+
 											<div
 												class="col-span-12 md:col-span-4 lg:col-span-6"
 											>
@@ -208,9 +253,49 @@ if (Astro.request.method === "POST") {
 													>
 												</select>
 											</div>
+
+											<div
+												class="col-span-12 md:col-span-4 lg:col-span-6"
+											>
+												<label
+													for="quotationProductType"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Tipo de Producto</label
+												>
+												<select
+													id="quotationProductType"
+													name="quotationProductType"
+													class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 select2"
+												>
+													<option
+														value="0"
+														selected=""
+														>-- Seleccionar Tipo de
+														Producto --</option
+													>
+													{
+														categories.map(
+															(category) => (
+																<option
+																	value={
+																		category.id
+																	}
+																>
+																	{
+																		category.name
+																	}
+																</option>
+															),
+														)
+													}
+												</select>
+											</div>
+
+											<StoresIsland client:only />
+
 											<!-- Internacional -->
 											<div
-												class="col-span-12 md:col-span-6 lg:col-span-6"
+												class="hidden col-span-12 md:col-span-6 lg:col-span-6 importation"
 											>
 												<label
 													for="quotationLink"
@@ -223,39 +308,11 @@ if (Astro.request.method === "POST") {
 													id="quotationLink"
 													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 													placeholder="Enlace del Producto"
-													required=""
 												/>
 											</div>
-											<div
-												class="col-span-12 md:col-span-6 lg:col-span-4"
-											>
-												<label
-													for="quotationStore"
-													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-													>Tienda</label
-												>
-												<select
-													id="quotationStore"
-													name="quotationStore"
-													class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 select2"
-												>
-													<option
-														value="0"
-														selected=""
-														>-- Seleccionar Tienda
-														--</option
-													>
 
-													<option value="1">
-														Indiferente
-													</option>
-													<option value="2"
-														>Amazon</option
-													>
-												</select>
-											</div>
 											<div
-												class="col-span-12 md:col-span-6 lg:col-span-4"
+												class="hidden col-span-12 md:col-span-6 lg:col-span-4 importation"
 											>
 												<label
 													for="quotationCountry"
@@ -276,13 +333,26 @@ if (Astro.request.method === "POST") {
 													<option value="1">
 														Indiferente
 													</option>
-													<option value="2"
-														>China</option
-													>
+													{
+														countries.map(
+															(country) => (
+																<option
+																	value={
+																		country.id
+																	}
+																>
+																	{
+																		country.name
+																	}
+																</option>
+															),
+														)
+													}
 												</select>
 											</div>
+
 											<div
-												class="col-span-12 md:col-span-6 lg:col-span-4"
+												class="hidden col-span-12 md:col-span-6 lg:col-span-4 importation"
 											>
 												<label
 													for="quotationDeliveryDate"
@@ -297,6 +367,8 @@ if (Astro.request.method === "POST") {
 													placeholder="Fecha de Entrega"
 												/>
 											</div>
+											<!-- /Internacional -->
+
 											<div
 												class="col-span-12 md:col-span-3 lg:col-span-3"
 											>
@@ -312,10 +384,13 @@ if (Astro.request.method === "POST") {
 													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 													min="0"
 													step="0.01"
+													placeholder="0.00"
+													value="0"
 												/>
 											</div>
+
 											<div
-												class="col-span-12 sm:col-span-4 md:col-span-3 lg:col-span-3"
+												class="hidden col-span-12 sm:col-span-4 md:col-span-3 lg:col-span-3 importation"
 											>
 												<label
 													for="quotationShipping"
@@ -329,26 +404,11 @@ if (Astro.request.method === "POST") {
 													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 													min="0"
 													step="0.01"
+													placeholder="0.00"
+													value="0"
 												/>
 											</div>
-											<div
-												class="col-span-12 sm:col-span-4 md:col-span-3 lg:col-span-3"
-											>
-												<label
-													for="quotationWeight"
-													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-													>Peso</label
-												>
-												<input
-													type="number"
-													name="quotationWeight"
-													id="quotationWeight"
-													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-													min="0"
-													step="0.01"
-												/>
-											</div>
-											<!-- /Internacional -->
+
 											<div
 												class="col-span-12 sm:col-span-4 md:col-span-3 lg:col-span-3"
 											>
@@ -364,7 +424,245 @@ if (Astro.request.method === "POST") {
 													class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
 													min="0"
 													step="1"
+													placeholder="0"
+													value="0"
 												/>
+											</div>
+
+											<!-- Measure checkbox -->
+											<div
+												class="col-span-12 sm:col-span-6 lg:col-span-4"
+											>
+												<label
+													class="inline-flex items-center mb-2 cursor-pointer"
+												>
+													<input
+														id="measureWeight"
+														type="checkbox"
+														value=""
+														class="sr-only peer"
+													/>
+													<div
+														class="relative
+                                                    w-11
+                                                    h-6
+                                                    bg-red-500 peer peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white peer-checked:bg-green-600 rounded-full rtl:peer-checked:after:-translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:peer-focus:ring-gray-800 dark:bg-red-700 dark:border-gray-600"
+													>
+													</div>
+													<span
+														class="ms-3 text-sm font-medium text-gray-400 dark:text-gray-500"
+													>
+														Peso
+													</span>
+												</label>
+												<label
+													class="inline-flex items-center mb-2 cursor-pointer"
+												>
+													<input
+														id="measureVolumetric"
+														type="checkbox"
+														value=""
+														class="sr-only peer"
+													/>
+													<div
+														class="relative
+                                                    w-11
+                                                    h-6
+                                                    bg-red-500 peer peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-gray-300 peer-checked:after:translate-x-full peer-checked:after:border-white peer-checked:bg-green-600 rounded-full rtl:peer-checked:after:-translate-x-full after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:peer-focus:ring-gray-800 dark:bg-red-700 dark:border-gray-600"
+													>
+													</div>
+													<span
+														class="ms-3 text-sm font-medium text-gray-400 dark:text-gray-500"
+													>
+														Dimensiones
+													</span>
+												</label>
+											</div>
+											<!--  -->
+
+											<!-- If Knowing the Weight -->
+											<div
+												class="hidden col-span-12 sm:col-span-6 lg:col-span-4 weight"
+											>
+												<label
+													for="quotationWeight"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Peso</label
+												>
+												<div class="relative">
+													<input
+														type="text"
+														name="quotationWeight"
+														id="quotationWeight"
+														class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+														min="0"
+														step="0.01"
+														placeholder="0.00"
+													/>
+													<div
+														class="absolute inset-y-0 end-0 flex items-center"
+													>
+														<select
+															id="quotationWeightUnit"
+															name="quotationWeightUnit"
+															class="bg-gray-50 border text-center border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+														>
+															{
+																weightUnits.map(
+																	(unit) => (
+																		<option
+																			value={
+																				unit.value
+																			}
+																		>
+																			{
+																				unit.name
+																			}
+																		</option>
+																	),
+																)
+															}
+														</select>
+													</div>
+												</div>
+											</div>
+											<!-- IF not knowing the weight -->
+											<div
+												class="col-span-12 sm:col-span-6 lg:col-span-4 hidden volumetric"
+											>
+												<label
+													for="quotationProductWidth"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Ancho</label
+												>
+												<div class="relative">
+													<input
+														type="text"
+														name="quotationProductWidth"
+														id="quotationProductWidth"
+														class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+														min="0"
+														step="0.01"
+														placeholder="0.00"
+													/>
+													<div
+														class="absolute inset-y-0 end-0 flex items-center"
+													>
+														<select
+															id="quotationProductWidthUnit"
+															name="quotationProductWidthUnit"
+															class="bg-gray-50 border text-center border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+														>
+															{
+																measureUnits.map(
+																	(unit) => (
+																		<option
+																			value={
+																				unit.value
+																			}
+																		>
+																			{
+																				unit.name
+																			}
+																		</option>
+																	),
+																)
+															}
+														</select>
+													</div>
+												</div>
+											</div>
+
+											<div
+												class="col-span-12 sm:col-span-6 lg:col-span-4 hidden volumetric"
+											>
+												<label
+													for="quotationProductHeight"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Altura</label
+												>
+												<div class="relative">
+													<input
+														type="text"
+														name="quotationProductHeight"
+														id="quotationProductHeigth"
+														class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+														min="0"
+														step="0.01"
+														placeholder="0.00"
+													/>
+													<div
+														class="absolute inset-y-0 end-0 flex items-center"
+													>
+														<select
+															id="quotationProductHeightUnit"
+															name="quotationProductHeightUnit"
+															class="bg-gray-50 border text-center border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+														>
+															{
+																measureUnits.map(
+																	(unit) => (
+																		<option
+																			value={
+																				unit.value
+																			}
+																		>
+																			{
+																				unit.name
+																			}
+																		</option>
+																	),
+																)
+															}
+														</select>
+													</div>
+												</div>
+											</div>
+
+											<div
+												class="col-span-12 sm:col-span-6 lg:col-span-4 hidden volumetric"
+											>
+												<label
+													for="quotationProductLength"
+													class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+													>Largo</label
+												>
+												<div class="relative">
+													<input
+														type="text"
+														name="quotationProductLength"
+														id="quotationProductLength"
+														class="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+														min="0"
+														step="0.01"
+														placeholder="0.00"
+													/>
+													<div
+														class="absolute inset-y-0 end-0 flex items-center"
+													>
+														<select
+															id="quotationProductLengthUnit"
+															name="quotationProductLengthUnit"
+															class="bg-gray-50 border text-center border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+														>
+															{
+																measureUnits.map(
+																	(unit) => (
+																		<option
+																			value={
+																				unit.value
+																			}
+																		>
+																			{
+																				unit.name
+																			}
+																		</option>
+																	),
+																)
+															}
+														</select>
+													</div>
+												</div>
 											</div>
 										</div>
 									</div>
@@ -372,7 +670,8 @@ if (Astro.request.method === "POST") {
 							</div>
 						</div>
 					</div>
-				</section><div>
+				</section>
+				<div>
 					<button
 						type="submit"
 						class="inline-flex justify-center rounded-md border border-transparent bg-secondary-400 py-2 px-4 text-sm font-medium text-gray-100 shadow-sm hover:bg-secondary-500 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2"
@@ -384,3 +683,67 @@ if (Astro.request.method === "POST") {
 		</div>
 	</div>
 </BaseLayout>
+
+<script type="module" is:inline>
+	// import { getStores } from "../api/quotations/stores.js";
+
+	// const storeSelect = document.getElementById("quotationStore");
+	let quotationType = document.getElementById("quotationType"),
+		measureWeight = document.getElementById("measureWeight"),
+		measureVolume = document.getElementById("measureVolumetric"),
+		importacion = document.querySelectorAll(".importation"),
+		volumetric = document.querySelectorAll(".volumetric");
+	weight = document.querySelectorAll(".weight");
+
+	quotationType.addEventListener("change", (e) => {
+		// const stores = getStores(e.target.value);
+		// stores.forEach((store) => {
+		// 	const option = document.createElement("option");
+		// 	option.value = store.id;
+		// 	option.textContent = store.name;
+		// 	storeSelect.appendChild(option);
+		// 	if (store.id === 1) {
+		// 		storeSelect.value = store.id;
+		// 	}
+		// });
+		if (e.target.value === "2" || e.target.value === 2) {
+			importacion.forEach((element) => {
+				element.classList.remove("hidden");
+				element.classList.add("block");
+			});
+		} else {
+			importacion.forEach((element) => {
+				element.classList.remove("block");
+				element.classList.add("hidden");
+			});
+		}
+	});
+
+	measureVolume.addEventListener("click", (e) => {
+		if (e.target.checked) {
+			volumetric.forEach((element) => {
+				element.classList.remove("hidden");
+				element.classList.add("block");
+			});
+		} else {
+			volumetric.forEach((element) => {
+				element.classList.remove("block");
+				element.classList.add("hidden");
+			});
+		}
+	});
+
+	measureWeight.addEventListener("click", (e) => {
+		if (e.target.checked) {
+			weight.forEach((element) => {
+				element.classList.remove("hidden");
+				element.classList.add("block");
+			});
+		} else {
+			weight.forEach((element) => {
+				element.classList.remove("block");
+				element.classList.add("hidden");
+			});
+		}
+	});
+</script>
