@@ -5,36 +5,42 @@ import {
 	db,
 	eq,
 	Quotations,
-	Quotations_Details,
+	Quotation_Details,
 	Products,
 	Images,
 	Product_Relations,
 } from "astro:db";
 
 const quotations = await db
-	.select({
-		id: Quotations.id,
-		number: Quotations.number,
-		product: {
-			id: Products.id,
-			name: Products.name,
-		},
-		price: Quotations_Details.price,
-		created_at: Quotations.created_at,
-		updated_at: Quotations.updated_at,
-		processed: Quotations.processed,
-		image: {
-			url: Images.image_url,
-			name: Images.name,
-			thumbnail: Images.image_thumbnail,
-		},
-	})
+	.select(
+		{
+	id: Quotations.id,
+	number: Quotations.number,
+	product: {
+		id: Products.id,
+		name: Products.name,
+	},
+	prices: {
+		ce: Quotation_Details.price_exportation,
+		cg: Quotation_Details.price_gob,
+		cf: Quotation_Details.price_retail,
+		cm: Quotation_Details.price_wholesale,
+	},
+	created_at: Quotations.created_at,
+	updated_at: Quotations.updated_at,
+	processed: Quotations.processed,
+	image: {
+		url: Images.image_url,
+		name: Images.name,
+	},
+}
+	)
 	.from(Quotations)
 	.leftJoin(
-		Quotations_Details,
-		eq(Quotations.id, Quotations_Details.quotation_id),
+		Quotation_Details,
+		eq(Quotations.id, Quotation_Details.quotation_id),
 	)
-	.leftJoin(Products, eq(Quotations_Details.product_id, Products.id))
+	.leftJoin(Products, eq(Quotation_Details.product_id, Products.id))
 	.leftJoin(Product_Relations, eq(Products.id, Product_Relations.product_id))
 	.leftJoin(Images, eq(Product_Relations.image_id, Images.id));
 ---
@@ -145,17 +151,22 @@ const quotations = await db
 													{quotation.number}
 												</td>
 												<td class="whitespace-nowrap px-3 py-4 text-sm">
-													<a
-														href={`/products/${quotation.product.id}`}
-														class="text-info-500 hover:text-info-600"
-													>
-														{quotation.product.name}
-													</a>
+													{quotation.product && (
+														<a
+															href={`/products/${quotation.product.id}/edit`}
+															class="text-info-500 hover:text-info-600"
+														>
+															{
+																quotation
+																	.product
+																	.name
+															}
+														</a>
+													)}
 												</td>
 												<td class="whitespace-nowrap px-3 py-4 text-sm">
-													${" "}
-													{quotation.price
-														? quotation.price
+													{quotation.prices?.cf
+														? `CF: $ ${quotation.prices.cf}`
 														: "0.00"}
 												</td>
 												<td class="whitespace-nowrap px-3 py-4 text-sm">
