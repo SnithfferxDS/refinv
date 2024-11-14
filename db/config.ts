@@ -7,7 +7,7 @@ const Products = defineTable({
         handle: column.text({ optional: true }),
         description: column.text({ optional: true }),
         short_description: column.text({ optional: true }),
-        tags: column.json(),
+        tags: column.json({ optional: true }),
         sku: column.text({ optional: true }),
         mpn: column.text({ optional: true }),
         upc: column.text({ unique: true }),
@@ -36,7 +36,8 @@ const Categories = defineTable({
         name: column.text({ unique: true }),
         description: column.text({ optional: true }),
         status: column.boolean(),
-        relations: column.number({ references: () => Category_Relations.columns.id, default: 1 }),
+        parent_id: column.number({ optional: true }),
+        children: column.boolean({ default: false }),
         logo: column.text({ optional: true }),
         main: column.boolean({ default: false }),
         dai: column.number({ default: 0.0 }),
@@ -54,7 +55,7 @@ const Images = defineTable({
         name: column.text({ unique: true }),
         image_url: column.text({ optional: true }),
         image_thumbnail: column.text({ optional: true }),
-        possition: column.number(),
+        possition: column.number({ default: 1 }),
         created_at: column.date({ default: NOW }),
         updated_at: column.date({ optional: true }),
         deleted_at: column.date({ optional: true })
@@ -64,24 +65,13 @@ const Images = defineTable({
 const Product_Relations = defineTable({
     columns: {
         id: column.number({ primaryKey: true }),
-        product_id: column.number({ references: () => Products.columns.id }),
-        image_id: column.number({ references: () => Images.columns.id }),
-        category_id: column.number({ references: () => Categories.columns.id }),
+        product_id: column.number(),
+        image_id: column.number(),
+        category_id: column.number(),
         created_at: column.date({ default: NOW }),
         updated_at: column.date({ optional: true })
     }
 });
-
-const Category_Relations = defineTable({
-    columns: {
-        id: column.number({ primaryKey: true }),
-        parent_id: column.number(),
-        child_id: column.number(),
-        created_at: column.date({ default: NOW }),
-        updated_at: column.date({ optional: true })
-    }
-});
-
 
 const Quotations = defineTable({
     columns: {
@@ -93,7 +83,6 @@ const Quotations = defineTable({
         total: column.number({ default: 0.0 }),
         taxes: column.number({ default: 0.0 }),
         discount: column.number({ default: 0.0 }),
-        quotation_details: column.number({ optional: true }),
         seller_id: column.number({ optional: true }),
         buyer_id: column.number({ optional: true }),
         processed: column.boolean({ default: false }),
@@ -102,11 +91,11 @@ const Quotations = defineTable({
     }
 });
 
-const Quotations_Details = defineTable({
+const Quotation_Details = defineTable({
     columns: {
         id: column.number({ primaryKey: true }),
-        quotation_id: column.number({ references: () => Quotations.columns.id }),
-        product_id: column.number({ references: () => Products.columns.id }),
+        quotation_id: column.number(),
+        product_id: column.number(),
         quantity: column.number({ default: 1 }),
         price_exportation: column.number({ default: 0.0 }),
         price_gob: column.number({ default: 0.0 }),
@@ -124,9 +113,9 @@ const Quotations_Details = defineTable({
         height: column.number({ optional: true, default: 0.0 }),
         length: column.number({ optional: true, default: 0.0 }),
         measure_unit: column.text({ optional: true, default: 'cm' }),
-        store_id: column.number({ references: () => Stores.columns.id }),
-        country_id: column.number({ references: () => Countries.columns.id }),
-        store_link: column.number({ optional: true }),
+        store_id: column.number(),
+        country_id: column.number(),
+        store_link: column.text({ optional: true }),
         quot_type: column.number({ default: 1 }),
         processed: column.boolean({ default: false }),
         quot_status: column.number({ default: 1 }),
@@ -154,6 +143,8 @@ const Stores = defineTable({
         contact_phone: column.text({ optional: true }),
         contact_email: column.text({ optional: true }),
         taxes: column.number({ default: 0.0 }),
+        shipping: column.boolean({ default: true }),
+        store_type: column.number({ default: 1 }),
         active: column.boolean({ default: true }),
         created_at: column.date({ default: NOW }),
         updated_at: column.date({ optional: true })
@@ -383,10 +374,12 @@ export default defineDb({
     tables: {
         Products,
         Categories,
-        Category_Relations,
         Product_Relations,
         Quotations,
-        Quotations_Details,
+        Quotation_Details,
+        Images,
+        Stores,
+        Countries,
         // Suppliers,
         // Statuses,
         // Brands,
@@ -396,8 +389,5 @@ export default defineDb({
         // Sales_Details,
         // Users,
         // Sellers,
-        Images,
-        Stores,
-        Countries,
     },
 });
