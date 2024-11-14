@@ -13,4 +13,8 @@ import db from '@astrojs/db';
 export default defineConfig({
   integrations: [tailwind(), react(), sitemap(), db()],
   output: 'server',
+
+  adapter: node({
+    mode: 'standalone',
+  }),
 });
